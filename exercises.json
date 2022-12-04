@@ -1,0 +1,110 @@
+{
+    "2-handed swing": {
+        "has_left_right": false
+    },
+    "1-handed swing": {
+        "has_left_right": true
+    },
+    "1-handed swing (switch)": {
+        "has_left_right": false
+    },
+    "Goblet squat": {
+        "has_left_right": false
+    },
+    "Sumo deadlift": {
+        "has_left_right": false
+    },
+    "Reverse lunge": {
+        "has_left_right": true
+    },
+    "Thruster": {
+        "has_left_right": true
+    },
+    "Halo": {
+        "has_left_right": false
+    },
+    "High knee twist": {
+        "has_left_right": false
+    },
+    "Triceps dip": {
+        "has_left_right": false
+    },
+    "Weighted bridge": {
+        "has_left_right": false
+    },
+    "Sit up twist": {
+        "has_left_right": false
+    },
+    "Plank slide through": {
+        "has_left_right": false
+    },
+    "Floor -> rack -> overhead thrust": {
+        "has_left_right": true
+    },
+    "Uneven press ups": {
+        "has_left_right": true
+    },
+    "2-handed swing squat combo": {
+        "has_left_right": false
+    },
+    "2-handed overhead thrust": {
+        "has_left_right": false
+    },
+    "Press ups": {
+        "has_left_right": false
+    },
+    "Chest press ups": {
+        "has_left_right": false
+    },
+    "Inclined press ups": {
+        "has_left_right": false
+    },
+    "Plank": {
+        "has_left_right": false
+    },
+    "Press up plank": {
+        "has_left_right": false
+    },
+    "1-handed farmers walk": {
+        "has_left_right": true
+    },
+    "2-handed farmers walk": {
+        "has_left_right": false
+    },
+    "Curtsey": {
+        "has_left_right": true
+    },
+    "Row toss": {
+        "has_left_right": false
+    },
+    "Single arm row": {
+        "has_left_right": true
+    },
+    "Overhead marches": {
+        "has_left_right": true
+    },
+    "Overhead reverse lunges": {
+        "has_left_right": true
+    },
+    "Romanian deadlift": {
+        "has_left_right": false
+    },
+    "Kneeling overhead push": {
+        "has_left_right": true
+    },
+    "Inverted row": {
+        "has_left_right": false
+    },
+    "Inverted row chin-up": {
+        "has_left_right": false
+    },
+    "Around the waist": {
+        "has_left_right": true
+    },
+    "2-handed biceps curl": {
+        "has_left_right": false
+    },
+    "Snatch": {
+        "has_left_right": true
+    }
+}
