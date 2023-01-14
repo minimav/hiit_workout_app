@@ -1,7 +1,7 @@
 """Functions and structs for creating workouts."""
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 import json
 
 

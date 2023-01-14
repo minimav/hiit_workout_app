@@ -1,12 +1,11 @@
-import sys
-
-sys.path.append("src")
-
 import json
+import sys
 
 import pytest
 
-from exercise import ExerciseManager
+sys.path.append("src")
+
+from exercise import ExerciseManager  # noqa: E402
 
 
 @pytest.fixture(scope="function")

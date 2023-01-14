@@ -12,9 +12,9 @@ python src/app.py
 
 ```
 pytest tests
-``` 
+```
 
 ## Todo
 
-* Able to add new exercises 
+* Able to add new exercises
 * Able to save workouts
