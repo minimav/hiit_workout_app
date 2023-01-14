@@ -5,6 +5,7 @@ import customtkinter
 from exercise import Exercise, ExerciseManager, Rest
 from workout import (
     generate_workout,
+    Phase,
     Workout,
     WorkoutManager,
     workout_from_config,
@@ -69,7 +70,6 @@ class App(customtkinter.CTk):
 
         self.num_exercises_info = customtkinter.CTkLabel(
             master=self.workout,
-            text=f"{self.num_exercises_default} exercises",
             font=("roboto", 18),
         )
         self.num_exercises_info.pack()
@@ -80,12 +80,11 @@ class App(customtkinter.CTk):
             number_of_steps=20,
             command=self.update_num_exercises_info,
         )
-        self.num_exercises_slider.set(self.num_exercises_default)
+        self.update_num_exercises_info(self.num_exercises_default)
         self.num_exercises_slider.pack(padx=10, pady=10)
 
         self.exercise_duration_info = customtkinter.CTkLabel(
             master=self.workout,
-            text=f"{self.exercise_duration_seconds_default} seconds/exercise",
             font=("roboto", 18),
         )
         self.exercise_duration_info.pack()
@@ -96,14 +95,11 @@ class App(customtkinter.CTk):
             number_of_steps=90,
             command=self.update_exercise_duration_info,
         )
-        self.exercise_duration_seconds_slider.set(
-            self.exercise_duration_seconds_default
-        )
+        self.update_exercise_duration_info(self.exercise_duration_seconds_default)
         self.exercise_duration_seconds_slider.pack(padx=10, pady=10)
 
         self.rest_duration_info = customtkinter.CTkLabel(
             master=self.workout,
-            text=f"{self.rest_duration_seconds_default} seconds/rest",
             font=("roboto", 18),
         )
         self.rest_duration_info.pack()
@@ -114,7 +110,7 @@ class App(customtkinter.CTk):
             number_of_steps=55,
             command=self.update_rest_duration_info,
         )
-        self.rest_duration_seconds_slider.set(self.rest_duration_seconds_default)
+        self.update_rest_duration_info(self.rest_duration_seconds_default)
         self.rest_duration_seconds_slider.pack(padx=10, pady=10)
 
         self.start_workout_button = customtkinter.CTkButton(
@@ -157,6 +153,22 @@ class App(customtkinter.CTk):
             self.exercise_manager, self.workout_manager[workout_name]
         )
 
+    def get_phase_countdown_colour(
+        self, phase: Phase, before_first_exercise: bool
+    ) -> str:
+        """Get colour for timer for particular type of phase.
+
+        The initial rest period gets a different colour to distinguish it
+        from rests between exercises.
+        """
+        is_rest = isinstance(phase.type, Rest)
+        if before_first_exercise and is_rest:
+            return "orange"
+        elif is_rest:
+            return "green"
+        else:
+            return "red"
+
     def start_workout(self):
         """Begin a workout.
 
@@ -180,18 +192,15 @@ class App(customtkinter.CTk):
         total_seconds = sum(phase.duration_seconds for phase in phases)
 
         exercises = [p.type for p in phases if isinstance(p.type, Exercise)]
-        exercise_texts = [exercise.name for exercise in exercises]
+        exercise_names = [exercise.name for exercise in exercises]
 
         total_milliseconds = 0
         exercise_index = 0
         for phase in phases:
-            is_rest = isinstance(phase.type, Rest)
-            if exercise_index == 0 and is_rest:
-                fg_color = "orange"
-            elif is_rest:
-                fg_color = "green"
-            else:
-                fg_color = "red"
+            fg_color = self.get_phase_countdown_colour(
+                phase, before_first_exercise=exercise_index == 0
+            )
+            if isinstance(phase.type, Exercise):
                 exercise_index += 1
 
             callback = self.after(
@@ -221,7 +230,7 @@ class App(customtkinter.CTk):
                 callback = self.after(
                     total_milliseconds,
                     self.update_exercise_list,
-                    exercise_texts[exercise_index : exercise_index + 5],
+                    exercise_names[exercise_index : exercise_index + 5],
                 )
                 self.callbacks.append(callback)
 
@@ -274,20 +283,23 @@ class App(customtkinter.CTk):
         self.exercise_list.configure(text="")
 
     def update_num_exercises_info(self, value):
-        """Update the custom # exercises after a slider change."""
+        """Update the # exercises after a slider change."""
+        self.num_exercises_slider.set(value)
         self.num_exercises_info.configure(text=f"{int(value)} exercises")
 
     def update_exercise_duration_info(self, value):
         """Update the custom per-exercise duration after a slider change."""
+        self.exercise_duration_seconds_slider.set(value)
         self.exercise_duration_info.configure(text=f"{int(value)} seconds/exercise")
 
     def update_rest_duration_info(self, value):
         """Update the custom per-rest duration after a slider change."""
+        self.rest_duration_seconds_slider.set(value)
         self.rest_duration_info.configure(text=f"{int(value)} seconds/rest")
 
-    def update_exercise_list(self, exercise_texts: list[str]):
+    def update_exercise_list(self, exercise_names: list[str]):
         """Update the list of upcoming exercises after a phase change."""
-        self.exercise_list.configure(text="\n".join(exercise_texts))
+        self.exercise_list.configure(text="\n".join(exercise_names))
 
     def change_workout_type(self, workout_name):
         """Change workout type via dropdown."""
@@ -302,11 +314,8 @@ class App(customtkinter.CTk):
         if workout_name != "Custom":
             workout = self.workout_manager[workout_name]
             num_exercises = workout.calculate_num_exercises(self.exercise_manager)
-            self.num_exercises_slider.set(num_exercises)
             self.update_num_exercises_info(num_exercises)
-            self.exercise_duration_seconds_slider.set(workout.exercise_duration_seconds)
             self.update_exercise_duration_info(workout.exercise_duration_seconds)
-            self.rest_duration_seconds_slider.set(workout.rest_duration_seconds)
             self.update_rest_duration_info(workout.rest_duration_seconds)
 
 
