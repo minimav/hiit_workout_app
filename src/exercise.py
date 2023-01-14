@@ -33,6 +33,9 @@ class ExerciseManager:
     def __len__(self) -> int:
         return len(self.exercises)
 
+    def __getitem__(self, exercise_name: str) -> Exercise:
+        return self.exercises[exercise_name]
+
     def load_exercises(self) -> Dict[str, Exercise]:
         """Load all possible exercises."""
         exercises = {}

@@ -1,5 +1,5 @@
 """Functions and structs for creating workouts."""
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Dict, List, Union
 import json
@@ -31,7 +31,7 @@ class WorkoutConfig:
         """Get # exercises in workout, taking 1-handed variants into account."""
         num_exercises = 0
         for exercise_name in self.exercises:
-            exercise = exercise_manager.exercises[exercise_name]
+            exercise = exercise_manager[exercise_name]
             if exercise.single_handed_variations:
                 num_exercises += 2
             else:
@@ -39,10 +39,48 @@ class WorkoutConfig:
         return num_exercises
 
 
-def load_workouts() -> Dict[str, WorkoutConfig]:
-    """Load previously stored workouts."""
-    with open(Path("src") / "workouts.json", "r") as f:
-        return {k: WorkoutConfig(**v) for k, v in json.load(f).items()}
+class WorkoutManager:
+    """Manages stored workouts and creating them."""
+
+    def __init__(
+        self,
+        path: Path = Path("src") / "workouts.json",
+    ):
+        self.path = path
+        self.workouts = self.load_workouts()
+
+    def __len__(self):
+        return len(self.workouts)
+
+    def __getitem__(self, workout_name: str) -> WorkoutConfig:
+        return self.workouts[workout_name]
+
+    def load_workouts(self) -> Dict[str, WorkoutConfig]:
+        """Load previously stored workouts."""
+        with open(self.path, "r") as f:
+            return {k: WorkoutConfig(**v) for k, v in json.load(f).items()}
+
+    def add_workout(self, workout_name: str, config: WorkoutConfig):
+        """Add (or update) a new saved workout."""
+        self.workouts[workout_name] = config
+
+        with open(self.path, "r") as f:
+            workouts = json.load(f)
+
+        workouts[workout_name] = asdict(config)
+        with open(self.path, "w") as f:
+            json.dump(workouts, f)
+
+    def remove_workout(self, workout_name: str):
+        """Remove a stored workout."""
+        del self.workouts[workout_name]
+
+        with open(self.path, "r") as f:
+            workouts = json.load(f)
+
+        del workouts[workout_name]
+        with open(self.path, "w") as f:
+            json.dump(workouts, f)
 
 
 def apply_workout_correction(workout: Workout) -> Workout:
@@ -84,7 +122,7 @@ def generate_workout(
     already_done = set()
     workout = []
     while len(workout) < 2 * num_exercises:
-        exercise = exercise_manager.exercises[random.choice(exercise_names)]
+        exercise = exercise_manager[random.choice(exercise_names)]
         if exercise.name in already_done:
             continue
         if not allow_repeats:
@@ -113,7 +151,7 @@ def workout_from_config(
     workout = []
     for exercise_name in config.exercises:
         workout.append(rest_phase)
-        exercise = exercise_manager.exercises[exercise_name]
+        exercise = exercise_manager[exercise_name]
 
         if exercise.single_handed_variations:
             for side in ("left", "right"):

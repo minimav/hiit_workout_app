@@ -20,7 +20,7 @@ def test_add_exercise(exercise_manager, exercise):
         assert current_num_exercises + 1 == len(manager)
         assert exercise.name in manager.exercises
         assert (
-            manager.exercises[exercise.name].single_handed_variations
+            manager[exercise.name].single_handed_variations
             == exercise.single_handed_variations
         )
 

@@ -7,8 +7,8 @@ import customtkinter
 from exercise import Exercise, ExerciseManager, Rest
 from workout import (
     generate_workout,
-    load_workouts,
     Workout,
+    WorkoutManager,
     workout_from_config,
 )
 
@@ -29,7 +29,7 @@ class App(customtkinter.CTk):
         self.title("HIIT Workout")
         self.minsize(500, 300)
 
-        self.workouts = load_workouts()
+        self.workout_manager = WorkoutManager()
 
         self.grid_rowconfigure((0, 1), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
@@ -57,7 +57,7 @@ class App(customtkinter.CTk):
 
         self.saved_workout_dropdown = customtkinter.CTkOptionMenu(
             master=self.workout,
-            values=["Custom"] + list(self.workouts.keys()),
+            values=["Custom"] + list(self.workout_manager.workouts.keys()),
             command=self.change_workout_type,
         )
         self.saved_workout_dropdown.pack(padx=10, pady=10)
@@ -155,7 +155,9 @@ class App(customtkinter.CTk):
 
     def load_phases_for_saved_workout(self, workout_name: str) -> Workout:
         """Load phases that comprise a saved workout."""
-        return workout_from_config(self.exercise_manager, self.workouts[workout_name])
+        return workout_from_config(
+            self.exercise_manager, self.workout_manager[workout_name]
+        )
 
     def start_workout(self):
         """Begin a workout.
@@ -300,7 +302,7 @@ class App(customtkinter.CTk):
         self.rest_duration_seconds_slider.configure(state=state)
 
         if workout_name != "Custom":
-            workout = self.workouts[workout_name]
+            workout = self.workout_manager[workout_name]
             num_exercises = workout.calculate_num_exercises(self.exercise_manager)
             self.num_exercises_slider.set(num_exercises)
             self.update_num_exercises_info(num_exercises)
