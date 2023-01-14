@@ -87,7 +87,6 @@ def generate_workout(
     already_done = set()
     workout = []
     while len(workout) < 2 * num_exercises:
-        workout.append(rest_phase)
         exercise = EXERCISES[random.choice(exercise_names)]
         if exercise.name in already_done:
             continue
@@ -97,9 +96,25 @@ def generate_workout(
         if exercise.single_handed_variations:
             for side in ("left", "right"):
                 one_sided_exercise = Exercise(f"{exercise.name} ({side})", True)
+                workout.append(rest_phase)
                 workout.append(Phase(exercise_duration_seconds, one_sided_exercise))
         else:
+            workout.append(rest_phase)
             workout.append(Phase(exercise_duration_seconds, exercise))
+
+    if len(workout) > 2 * num_exercises:
+        # apply correction for going over limit with 1-handed variations
+        for index, phase in enumerate(workout):
+            if (
+                isinstance(phase.type, Exercise)
+                and not phase.type.single_handed_variations
+            ):
+                # remove first 2-handed exercise and preceding rest
+                return workout[: index - 1] + workout[index + 1 :]
+
+        # edge case where odd number of exercises but all 1-handed variants chosen
+        # so we fail in the check above - in this case just do the 1-minute longer
+        # workout!
 
     return workout
 
