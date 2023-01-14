@@ -2,6 +2,10 @@
 
 This is a simple Tkinter app to help with HIIT/Kettlebell workouts. Possible exercises are stored in `exercises.json` and can be modified as desired. Saved workouts can be defined in `workouts.json` and loaded, or randomised workouts with custom durations used.
 
+Here is an example of a custom workout whose exercises have been randomly selected:
+
+![workout](media/app.gif)
+
 ## Installation
 
 First, create a virtual environment with your preferred Python version (>=3.9):
