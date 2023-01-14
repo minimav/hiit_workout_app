@@ -120,7 +120,7 @@ def generate_workout(
 
     rest_phase = Phase(rest_duration_seconds, Rest())
     already_done = set()
-    workout = []
+    workout: Workout = []
     while len(workout) < 2 * num_exercises:
         exercise = exercise_manager[random.choice(exercise_names)]
         if exercise.name in already_done:
