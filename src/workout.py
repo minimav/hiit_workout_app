@@ -1,7 +1,8 @@
 """Functions and structs for creating workouts."""
+from __future__ import annotations
+
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, List, Union
 import json
 import random
 
@@ -13,10 +14,10 @@ class Phase:
     """A workout phase, either an exercise or a rest."""
 
     duration_seconds: int
-    type: Union[Exercise, Rest]
+    type: Exercise | Rest
 
 
-Workout = List[Phase]
+Workout = list[Phase]
 
 
 @dataclass
@@ -25,7 +26,7 @@ class WorkoutConfig:
 
     exercise_duration_seconds: int
     rest_duration_seconds: int
-    exercises: List[str]
+    exercises: list[str]
 
     def calculate_num_exercises(self, exercise_manager: ExerciseManager) -> int:
         """Get # exercises in workout, taking 1-handed variants into account."""
@@ -55,7 +56,7 @@ class WorkoutManager:
     def __getitem__(self, workout_name: str) -> WorkoutConfig:
         return self.workouts[workout_name]
 
-    def load_workouts(self) -> Dict[str, WorkoutConfig]:
+    def load_workouts(self) -> dict[str, WorkoutConfig]:
         """Load previously stored workouts."""
         with open(self.path, "r") as f:
             return {k: WorkoutConfig(**v) for k, v in json.load(f).items()}

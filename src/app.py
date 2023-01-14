@@ -1,6 +1,4 @@
 """HIIT workout app."""
-from typing import List
-
 import tkinter
 import customtkinter
 
@@ -287,7 +285,7 @@ class App(customtkinter.CTk):
         """Update the custom per-rest duration after a slider change."""
         self.rest_duration_info.configure(text=f"{int(value)} seconds/rest")
 
-    def update_exercise_list(self, exercise_texts: List[str]):
+    def update_exercise_list(self, exercise_texts: list[str]):
         """Update the list of upcoming exercises after a phase change."""
         self.exercise_list.configure(text="\n".join(exercise_texts))
 

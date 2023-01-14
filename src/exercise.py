@@ -1,7 +1,6 @@
 """Functions and structs for creating workouts."""
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict
 import json
 
 
@@ -36,7 +35,7 @@ class ExerciseManager:
     def __getitem__(self, exercise_name: str) -> Exercise:
         return self.exercises[exercise_name]
 
-    def load_exercises(self) -> Dict[str, Exercise]:
+    def load_exercises(self) -> dict[str, Exercise]:
         """Load all possible exercises."""
         exercises = {}
         with open(self.path, "r") as f:
