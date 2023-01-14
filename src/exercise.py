@@ -4,6 +4,9 @@ from pathlib import Path
 import json
 
 
+from utils import get_path_to_file
+
+
 @dataclass
 class Exercise:
     """An exercise, either 2-handed or with 1-handed variations."""
@@ -26,7 +29,7 @@ class ExerciseManager:
         self,
         path: Path = Path("src") / "exercises.json",
     ):
-        self.path = path
+        self.path = get_path_to_file(path)
         self.exercises = self.load_exercises()
 
     def __len__(self) -> int:

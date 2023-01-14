@@ -7,6 +7,7 @@ import json
 import random
 
 from exercise import Exercise, ExerciseManager, Rest
+from utils import get_path_to_file
 
 
 @dataclass
@@ -47,7 +48,7 @@ class WorkoutManager:
         self,
         path: Path = Path("src") / "workouts.json",
     ):
-        self.path = path
+        self.path = get_path_to_file(path)
         self.workouts = self.load_workouts()
 
     def __len__(self):
