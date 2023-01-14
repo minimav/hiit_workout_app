@@ -1,3 +1,7 @@
 .venv
 __pycache__
 media/*.mov
+*.spec
+build
+dist
+.DS_Store
