@@ -1,5 +1,6 @@
 """Functions and structs for creating workouts."""
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Union
 import json
 import random
@@ -40,8 +41,30 @@ class WorkoutConfig:
 
 def load_workouts() -> Dict[str, WorkoutConfig]:
     """Load previously stored workouts."""
-    with open("src/workouts.json", "r") as f:
+    with open(Path("src") / "workouts.json", "r") as f:
         return {k: WorkoutConfig(**v) for k, v in json.load(f).items()}
+
+
+def apply_workout_correction(workout: Workout) -> Workout:
+    """Apply correction for going over limit via 1-handed variations.
+
+    This could happen for example if we were generating a workout with 4
+    exercises but during generation sampled 2 exercises with 1-handed
+    variations and a 2-handed exercise, for 5 exercises in total. Removing
+    the 2-handed exercise -- if ones exists -- fixes this.
+
+    This function assumes that a check has already been done on the number
+    of exercises to ensure that the correction is needed.
+    """
+    for index, phase in enumerate(workout):
+        if isinstance(phase.type, Exercise) and not phase.type.single_handed_variations:
+            # remove first 2-handed exercise and preceding rest
+            return workout[: index - 1] + workout[index + 1 :]
+
+    # edge case where odd number of exercises but all 1-handed variants chosen
+    # so we fail in the check above - in this case just do the 1-minute longer
+    # workout!
+    return workout
 
 
 def generate_workout(
@@ -77,18 +100,7 @@ def generate_workout(
             workout.append(Phase(exercise_duration_seconds, exercise))
 
     if len(workout) > 2 * num_exercises:
-        # apply correction for going over limit with 1-handed variations
-        for index, phase in enumerate(workout):
-            if (
-                isinstance(phase.type, Exercise)
-                and not phase.type.single_handed_variations
-            ):
-                # remove first 2-handed exercise and preceding rest
-                return workout[: index - 1] + workout[index + 1 :]
-
-        # edge case where odd number of exercises but all 1-handed variants chosen
-        # so we fail in the check above - in this case just do the 1-minute longer
-        # workout!
+        return apply_workout_correction(workout)
 
     return workout
 

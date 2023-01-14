@@ -1,7 +1,7 @@
 """Functions and structs for creating workouts."""
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 import json
 
 
@@ -25,8 +25,8 @@ class ExerciseManager:
 
     path: Path = Path("src") / "exercises.json"
 
-    def __init__(self):
-        self.exercises = self.load_exercises()
+    def __init__(self, exercises: Optional[Dict[str, Exercise]] = None):
+        self.exercises = self.load_exercises() if exercises is None else exercises
 
     def __len__(self) -> int:
         return len(self.exercises)
