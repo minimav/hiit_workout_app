@@ -26,8 +26,3 @@ Either `python src/app.py` or `make start`.
 ## Tests
 
 Either `pytest tests` or `make test`.
-
-## Todo
-
-* Able to add new exercises
-* Able to save workouts
