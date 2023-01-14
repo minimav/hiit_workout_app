@@ -25,7 +25,7 @@ jobs:
           pre-commit run --all-files
 
   test:
-    needs: pre-commit
+    needs: pre-commits
     runs-on: ubuntu-latest
     strategy:
       matrix:
