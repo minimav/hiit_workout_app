@@ -1,110 +1,116 @@
 {
     "2-handed swing": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "1-handed swing": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "1-handed swing (switch)": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Goblet squat": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Sumo deadlift": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Reverse lunge": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Thruster": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Halo": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "High knee twist": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Triceps dip": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Weighted bridge": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Sit up twist": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Plank slide through": {
-        "has_left_right": false
+        "single_handed_variations": false
+    },
+    "Rack -> overhead thrust": {
+        "single_handed_variations": true
     },
     "Floor -> rack -> overhead thrust": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Uneven press ups": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "2-handed swing squat combo": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "2-handed overhead thrust": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Press ups": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Chest press ups": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Inclined press ups": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Plank": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Press up plank": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "1-handed farmers walk": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "2-handed farmers walk": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Curtsey": {
-        "has_left_right": true
-    },
-    "Row toss": {
-        "has_left_right": false
+        "single_handed_variations": true
     },
     "Single arm row": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Overhead marches": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Overhead reverse lunges": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Romanian deadlift": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Kneeling overhead push": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "Inverted row": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Inverted row chin-up": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Around the waist": {
-        "has_left_right": true
+        "single_handed_variations": true
     },
     "2-handed biceps curl": {
-        "has_left_right": false
+        "single_handed_variations": false
     },
     "Snatch": {
-        "has_left_right": true
+        "single_handed_variations": true
+    },
+    "Renegade row": {
+        "single_handed_variations": true
+    },
+    "Upright row switches": {
+        "single_handed_variations": false
     }
 }
