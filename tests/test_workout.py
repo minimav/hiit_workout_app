@@ -1,17 +1,8 @@
 """Tests for workout module."""
 import pytest
 
-from exercise import Exercise, ExerciseManager, Rest
+from exercise import Exercise, Rest
 from workout import apply_workout_correction, Phase, WorkoutConfig
-
-
-@pytest.fixture(scope="function")
-def exercise_manager() -> ExerciseManager:
-    exercises = {
-        "1-handed-exercise": Exercise("1-handed-exercise", True),
-        "2-handed-exercise": Exercise("2-handed-exercise", False),
-    }
-    return ExerciseManager(exercises=exercises)
 
 
 def test_apply_workout_correction():

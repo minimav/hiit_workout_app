@@ -21,21 +21,22 @@ class Rest:
 
 
 class ExerciseManager:
-    """In control of available exercises."""
+    """Manages available exercises."""
 
-    path: Path = Path("src") / "exercises.json"
-
-    def __init__(self, exercises: Optional[Dict[str, Exercise]] = None):
-        self.exercises = self.load_exercises() if exercises is None else exercises
+    def __init__(
+        self,
+        path: Path = Path("src") / "exercises.json",
+    ):
+        self.path = path
+        self.exercises = self.load_exercises()
 
     def __len__(self) -> int:
         return len(self.exercises)
 
-    @classmethod
-    def load_exercises(cls) -> Dict[str, Exercise]:
+    def load_exercises(self) -> Dict[str, Exercise]:
         """Load all possible exercises."""
         exercises = {}
-        with open(cls.path, "r") as f:
+        with open(self.path, "r") as f:
             for exercise_name, metadata in json.load(f).items():
                 exercises[exercise_name] = Exercise(
                     exercise_name, metadata["single_handed_variations"]
