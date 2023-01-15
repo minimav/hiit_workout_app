@@ -169,6 +169,7 @@ def workout_from_config(
         if exercise.single_handed_variations:
             for side in ("left", "right"):
                 one_sided_exercise = Exercise(f"{exercise.name} ({side})", True)
+                workout.append(rest_phase)
                 workout.append(
                     Phase(config.exercise_duration_seconds, one_sided_exercise)
                 )

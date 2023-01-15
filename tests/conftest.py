@@ -1,4 +1,5 @@
 import json
+import string
 import sys
 
 import pytest
@@ -16,6 +17,20 @@ def exercise_manager(tmpdir) -> ExerciseManager:
         "1-handed-exercise": {"single_handed_variations": True},
         "2-handed-exercise": {"single_handed_variations": False},
     }
+    path = tmpdir / "exercises.json"
+    with open(path, "w") as f:
+        json.dump(exercises, f)
+
+    return ExerciseManager(path=path)
+
+
+@pytest.fixture(scope="function")
+def exercise_manager_with_more_exercises(tmpdir) -> ExerciseManager:
+    """Create exercise manager with more exercises and temp file."""
+    exercises = {}
+    for suffix in string.ascii_lowercase:
+        exercises[f"1-handed-exercise-{suffix}"] = {"single_handed_variations": True}
+        exercises[f"2-handed-exercise-{suffix}"] = {"single_handed_variations": False}
     path = tmpdir / "exercises.json"
     with open(path, "w") as f:
         json.dump(exercises, f)

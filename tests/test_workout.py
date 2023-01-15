@@ -1,8 +1,18 @@
 """Tests for workout module."""
+from hypothesis import given, HealthCheck, settings
+from hypothesis.strategies import data, integers, lists, sampled_from
 import pytest
 
 from exercise import Exercise, Rest
-from workout import apply_workout_correction, Phase, WorkoutConfig, WorkoutManager
+from workout import (
+    apply_workout_correction,
+    generate_workout,
+    Phase,
+    workout_from_config,
+    Workout,
+    WorkoutConfig,
+    WorkoutManager,
+)
 
 
 def test_apply_workout_correction():
@@ -155,3 +165,82 @@ def test_exercises_in_workouts(workout_manager):
     workout_manager.add_workout("new-workout", config)
     # now all exercises should be in a workout
     assert workout_manager.exercises_in_workouts == set(all_exercises)
+
+
+def validate_rest_exercise_interleaving(workout: Workout):
+    """Check that rests and exercises are interleaved correctly."""
+    assert all(
+        isinstance(phase.type, Rest) for i, phase in enumerate(workout) if i % 2 == 0
+    )
+    assert all(
+        isinstance(phase.type, Exercise)
+        for i, phase in enumerate(workout)
+        if i % 2 == 1
+    )
+
+
+@settings(suppress_health_check=(HealthCheck.function_scoped_fixture,))
+@given(
+    num_exercises=integers(min_value=2, max_value=30),
+    exercise_duration_seconds=integers(min_value=1, max_value=30),
+    rest_duration_seconds=integers(min_value=1, max_value=30),
+)
+def test_generate_workout_has_rests_in_between_exercises(
+    exercise_manager_with_more_exercises,
+    num_exercises,
+    exercise_duration_seconds,
+    rest_duration_seconds,
+):
+    """A generated workout should have rests interleaved with the exercises."""
+    workout = generate_workout(
+        exercise_manager_with_more_exercises,
+        num_exercises=num_exercises,
+        exercise_duration_seconds=exercise_duration_seconds,
+        rest_duration_seconds=rest_duration_seconds,
+        allow_repeats=False,
+    )
+    validate_rest_exercise_interleaving(workout)
+    all_single_handed = all(
+        phase.type.single_handed_variations
+        for phase in workout
+        if isinstance(phase.type, Exercise)
+    )
+    if all_single_handed and num_exercises % 2 == 1:
+        # edge case where correction to remove a 2-handed exercise can't be applied
+        # thus we end up with one rest and one exercise phase too many
+        assert len(workout) == 2 * num_exercises + 2
+    else:
+        assert len(workout) == 2 * num_exercises
+
+
+@settings(suppress_health_check=(HealthCheck.function_scoped_fixture,))
+@given(
+    data=data(),
+    num_exercises=integers(min_value=1, max_value=30),
+    exercise_duration_seconds=integers(min_value=1, max_value=30),
+    rest_duration_seconds=integers(min_value=1, max_value=30),
+)
+def test_workout_from_config_has_rests_in_between_exercises(
+    exercise_manager_with_more_exercises,
+    data,
+    num_exercises,
+    exercise_duration_seconds,
+    rest_duration_seconds,
+):
+    """A workout made from config should have rests interleaved with the exercises."""
+    all_exercises = list(exercise_manager_with_more_exercises.exercises.keys())
+    workout_config = WorkoutConfig(
+        exercise_duration_seconds=exercise_duration_seconds,
+        rest_duration_seconds=rest_duration_seconds,
+        exercises=data.draw(
+            lists(
+                sampled_from(all_exercises),
+                min_size=num_exercises,
+                max_size=num_exercises,
+            )
+        ),
+    )
+    workout = workout_from_config(exercise_manager_with_more_exercises, workout_config)
+    print()
+    print(workout)
+    validate_rest_exercise_interleaving(workout)
