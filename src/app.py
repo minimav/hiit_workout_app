@@ -18,25 +18,26 @@ class App(customtkinter.CTk):
     num_exercises_default: int = 10
     exercise_duration_seconds_default: int = 30
     rest_duration_seconds_default: int = 20
-    num_next_exercises: int = 7
+    num_next_exercises: int = 10
 
-    def __init__(self):
+    def __init__(self, width=1000, height=500):
         super().__init__()
+        self.width = width
+        self.height = height
+
+        self.geometry(f"{width}x{height}")
+        self.minsize(500, 300)
+        self.title("HIIT Workout")
 
         self.exercise_manager = ExerciseManager()
-
-        self.geometry("1000x450")
-        self.title("HIIT Workout")
-        self.minsize(500, 300)
-
         self.workout_manager = WorkoutManager()
 
-        self.grid_rowconfigure((0, 1), weight=1)
+        self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
 
         self.countdown = customtkinter.CTkFrame(self, corner_radius=0)
         self.countdown.grid(
-            row=0, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
+            row=0, rowspan=2, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
         self.clock = customtkinter.CTkLabel(
             master=self.countdown, text="", font=("roboto", 96)
@@ -49,7 +50,7 @@ class App(customtkinter.CTk):
         self.callbacks = []
 
         self.workout = customtkinter.CTkFrame(self, width=50, corner_radius=0)
-        self.workout.grid(row=0, column=0, rowspan=2, padx=10, pady=10, sticky="nsew")
+        self.workout.grid(row=0, column=0, rowspan=3, padx=10, pady=10, sticky="nsew")
 
         self.options_title = customtkinter.CTkLabel(
             master=self.workout, text="Workout options", font=("roboto", 24), pady=10
@@ -123,11 +124,9 @@ class App(customtkinter.CTk):
         )
         self.reset_workout_button.pack(padx=10, pady=10)
 
-        self.next_exercises_frame = customtkinter.CTkFrame(
-            self, height=50, corner_radius=0
-        )
+        self.next_exercises_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.next_exercises_frame.grid(
-            row=1, column=1, columnspan=3, padx=10, pady=10, sticky="nsew"
+            row=2, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
         self.next_exercises_title = customtkinter.CTkLabel(
             master=self.next_exercises_frame,
@@ -135,9 +134,13 @@ class App(customtkinter.CTk):
             font=("roboto", 20),
             pady=10,
         ).pack()
-        self.next_exercises = customtkinter.CTkLabel(
-            master=self.next_exercises_frame, text="\n" * (self.num_next_exercises - 1)
+        self.next_exercises = customtkinter.CTkTextbox(
+            master=self.next_exercises_frame,
+            state=tkinter.DISABLED,
+            width=self.width / 3,
+            fg_color="gray17",
         )
+        self.next_exercises.tag_config("centered", justify="center")
         self.next_exercises.pack()
 
     def create_phases_for_custom_workout(self):
@@ -287,7 +290,9 @@ class App(customtkinter.CTk):
         self.exercise_info.configure(text="")
         self.clock.configure(text="")
         self.countdown.configure(fg_color="gray17")
-        self.next_exercises.configure(text="\n" * (self.num_next_exercises - 1))
+        self.next_exercises.configure(state=tkinter.NORMAL)
+        self.next_exercises.delete("0.0", "end")
+        self.next_exercises.configure(state=tkinter.DISABLED)
 
     def update_num_exercises_info(self, value):
         """Update the # exercises after a slider change."""
@@ -306,7 +311,9 @@ class App(customtkinter.CTk):
 
     def update_next_exercises(self, exercise_names: list[str]):
         """Update the list of upcoming exercises after a phase change."""
-        self.next_exercises.configure(text="\n".join(exercise_names))
+        self.next_exercises.configure(state=tkinter.NORMAL)
+        self.next_exercises.insert("0.0", "\n".join(exercise_names), "centered")
+        self.next_exercises.configure(state=tkinter.DISABLED)
 
     def change_workout_type(self, workout_name):
         """Change workout type via dropdown."""
