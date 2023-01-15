@@ -1,4 +1,6 @@
 """HIIT workout app."""
+from typing import Optional
+
 import tkinter
 import customtkinter
 
@@ -15,6 +17,13 @@ from workout import (
 from workout_editor import WorkoutEditor
 
 
+COLOURS = {
+    "orange": "#E2AD21",
+    "green": "#40BB25",
+    "red": "#C62C24",
+}
+
+
 class App(customtkinter.CTk):
     """HIIT workout app main class."""
 
@@ -29,6 +38,10 @@ class App(customtkinter.CTk):
 
         self.exercise_manager = ExerciseManager()
         self.workout_manager = WorkoutManager()
+
+        self.workout: Optional[Workout] = None
+        self.phase_remaining_seconds: Optional[int] = None
+        self.phase_index: Optional[int] = None
 
         self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
@@ -49,8 +62,8 @@ class App(customtkinter.CTk):
         self.exercise_info.place(relx=0.5, rely=0.2, anchor=tkinter.CENTER)
         self.callbacks = []
 
-        self.workout = customtkinter.CTkFrame(self, corner_radius=0)
-        self.workout.grid(
+        self.workout_frame = customtkinter.CTkFrame(self, corner_radius=0)
+        self.workout_frame.grid(
             row=0,
             column=0,
             rowspan=3,
@@ -61,36 +74,41 @@ class App(customtkinter.CTk):
         )
 
         self.options_title = customtkinter.CTkLabel(
-            master=self.workout, text="Workout options", font=("roboto", 24), pady=10
+            master=self.workout_frame,
+            text="Workout options",
+            font=("roboto", 24),
+            pady=10,
         ).pack()
 
         self.saved_workout_dropdown = customtkinter.CTkOptionMenu(
-            master=self.workout,
+            master=self.workout_frame,
             command=self.change_workout_type,
         )
         self.saved_workout_dropdown.pack(padx=10, pady=10)
         self.update_saved_workouts()
 
         self.edit_workouts_button = customtkinter.CTkButton(
-            master=self.workout, command=self.edit_workouts, text="Edit workouts"
+            master=self.workout_frame, command=self.edit_workouts, text="Edit workouts"
         )
         self.edit_workouts_button.pack(padx=10, pady=10)
 
         self.options_title = customtkinter.CTkLabel(
-            master=self.workout,
+            master=self.workout_frame,
             text="Customise",
             font=("roboto", 20),
             pady=10,
         ).pack()
 
         self.edit_exercises_button = customtkinter.CTkButton(
-            master=self.workout, command=self.edit_exercises, text="Edit exercises"
+            master=self.workout_frame,
+            command=self.edit_exercises,
+            text="Edit exercises",
         )
         self.edit_exercises_button.pack(padx=10, pady=10)
 
         self.workout_option_sliders: list[Slider] = []
         self.num_exercises_slider = Slider(
-            parent=self.workout,
+            parent=self.workout_frame,
             default=20,
             from_=10,
             to=30,
@@ -99,7 +117,7 @@ class App(customtkinter.CTk):
         self.workout_option_sliders.append(self.num_exercises_slider)
 
         self.exercise_duration_seconds_slider = Slider(
-            parent=self.workout,
+            parent=self.workout_frame,
             default=40,
             from_=30,
             to=120,
@@ -108,7 +126,7 @@ class App(customtkinter.CTk):
         self.workout_option_sliders.append(self.exercise_duration_seconds_slider)
 
         self.rest_duration_seconds_slider = Slider(
-            parent=self.workout,
+            parent=self.workout_frame,
             default=20,
             from_=10,
             to=60,
@@ -116,32 +134,63 @@ class App(customtkinter.CTk):
         )
         self.workout_option_sliders.append(self.rest_duration_seconds_slider)
 
+        self.workout_buttons = customtkinter.CTkFrame(
+            self.workout_frame,
+            corner_radius=0,
+        )
+        self.workout_buttons.pack()
+
         self.start_workout_button = customtkinter.CTkButton(
-            master=self.workout, command=self.start_workout, text="Start"
+            master=self.workout_buttons, command=self.start_workout, text="Start"
         )
-        self.start_workout_button.pack(padx=10, pady=10)
+        self.start_workout_button.configure(
+            state=tkinter.NORMAL, width=60, fg_color=COLOURS["green"]
+        )
+        self.start_workout_button.pack(padx=10, pady=10, side="left")
         self.reset_workout_button = customtkinter.CTkButton(
-            master=self.workout, command=self.reset_timer, text="Reset"
+            master=self.workout_buttons, command=self.reset_timer, text="Reset"
         )
-        self.reset_workout_button.pack(padx=10, pady=10)
+        self.reset_workout_button.configure(
+            state=tkinter.DISABLED, width=60, fg_color=COLOURS["red"]
+        )
+        self.reset_workout_button.pack(padx=10, pady=10, side="left")
+
+        self.pause_workout_button = customtkinter.CTkButton(
+            master=self.workout_buttons,
+            command=self.pause,
+            text="Pause workout",
+        )
+        self.pause_workout_button.configure(
+            state=tkinter.DISABLED, width=120, fg_color="grey"
+        )
+        self.pause_workout_button.pack(padx=10, pady=10, side="left")
 
         grid_kwargs = dict(
             row=2, rowspan=1, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
         self.next_exercises = NextExercises(self, grid_kwargs)
 
+    def pause(self):
+        """Pause the current workout."""
+        self.start_workout_button.configure(state=tkinter.NORMAL)
+        self.pause_workout_button.configure(state=tkinter.DISABLED)
+        self.reset_workout_button.configure(state=tkinter.NORMAL)
+        for callback in self.callbacks:
+            self.after_cancel(callback)
+        self.callbacks = []
+
     def create_phases_for_custom_workout(self):
         """Create phases for a custom workout using selected settings."""
-        return generate_workout(
+        self.workout = generate_workout(
             self.exercise_manager,
             num_exercises=self.num_exercises_slider.value,
             exercise_duration_seconds=self.exercise_duration_seconds_slider.value,
             rest_duration_seconds=self.rest_duration_seconds_slider.value,
         )
 
-    def load_phases_for_saved_workout(self, workout_name: str) -> Workout:
+    def load_phases_for_saved_workout(self, workout_name: str):
         """Load phases that comprise a saved workout."""
-        return workout_from_config(
+        self.workout = workout_from_config(
             self.exercise_manager, self.workout_manager[workout_name]
         )
 
@@ -155,11 +204,11 @@ class App(customtkinter.CTk):
         """
         is_rest = isinstance(phase.type, Rest)
         if before_first_exercise and is_rest:
-            return "orange"
+            return COLOURS["orange"]
         elif is_rest:
-            return "green"
+            return COLOURS["green"]
         else:
-            return "red"
+            return COLOURS["red"]
 
     def start_workout(self):
         """Begin a workout.
@@ -172,28 +221,42 @@ class App(customtkinter.CTk):
         the current progress throught the workout.
 
         """
-        self.reset_timer()
+        if self.workout is None:
+            self.reset_timer()
+            saved_workout_dropdown_value = self.saved_workout_dropdown._current_value
+            if saved_workout_dropdown_value == "Custom":
+                self.create_phases_for_custom_workout()
+            else:
+                self.load_phases_for_saved_workout(saved_workout_dropdown_value)
 
-        saved_workout_dropdown_value = self.saved_workout_dropdown._current_value
-        if saved_workout_dropdown_value == "Custom":
-            phases = self.create_phases_for_custom_workout()
-        else:
-            phases = self.load_phases_for_saved_workout(saved_workout_dropdown_value)
+        self.start_workout_button.configure(state=tkinter.DISABLED)
+        self.reset_workout_button.configure(state=tkinter.NORMAL)
+        self.pause_workout_button.configure(state=tkinter.NORMAL)
 
-        num_exercises = sum(1 for phase in phases if isinstance(phase.type, Exercise))
-        total_seconds = sum(phase.duration_seconds for phase in phases)
+        self.generate_countdown_callbacks()
 
-        exercises = [p.type for p in phases if isinstance(p.type, Exercise)]
+    def generate_countdown_callbacks(self):
+        """Generate callbacks to update countdown timer during workout."""
+        num_exercises = sum(
+            1 for phase in self.workout if isinstance(phase.type, Exercise)
+        )
+
+        exercises = [p.type for p in self.workout if isinstance(p.type, Exercise)]
         exercise_names = [exercise.name for exercise in exercises]
 
         total_milliseconds = 0
         exercise_index = 0
-        for phase in phases:
+        for phase_index, phase in enumerate(self.workout):
             fg_color = self.get_phase_countdown_colour(
                 phase, before_first_exercise=exercise_index == 0
             )
+
             if isinstance(phase.type, Exercise):
                 exercise_index += 1
+
+            if self.phase_index is not None and phase_index < self.phase_index:
+                # workout has been paused before and this phase has been completed
+                continue
 
             callback = self.after(
                 total_milliseconds, self.set_countdown_color, fg_color
@@ -207,7 +270,6 @@ class App(customtkinter.CTk):
                     phase.type.name,
                     exercise_index,
                     num_exercises,
-                    total_seconds,
                 )
                 self.callbacks.append(callback)
             else:
@@ -226,28 +288,31 @@ class App(customtkinter.CTk):
                 )
                 self.callbacks.append(callback)
 
-            for i in range(phase.duration_seconds):
+            if self.phase_index is not None and phase_index == self.phase_index:
+                seconds_left_in_phase = self.phase_remaining_seconds
+            else:
+                seconds_left_in_phase = phase.duration_seconds
+
+            for elapsed_seconds in range(seconds_left_in_phase):
                 callback = self.after(
                     total_milliseconds,
                     self.update_clock,
-                    phase.duration_seconds - i,
+                    seconds_left_in_phase - elapsed_seconds,
+                    phase_index,
                 )
                 self.callbacks.append(callback)
                 total_milliseconds += 1000
 
-        self.after(total_milliseconds, lambda: self.clock.configure(text=""))
-        self.after(total_milliseconds, lambda: self.exercise_info.configure(text=""))
-        self.after(
-            total_milliseconds, lambda: self.countdown.configure(fg_color="gray17")
-        )
+        callback = self.after(total_milliseconds, self.reset_timer)
+        self.callbacks.append(callback)
 
-    def update_clock(self, seconds):
+    def update_clock(self, seconds: int, phase_index: int):
         """Update the seconds remaining during the current phase."""
         self.clock.configure(text=str(seconds))
+        self.phase_remaining_seconds = seconds
+        self.phase_index = phase_index
 
-    def update_exercise_info(
-        self, exercise_name, exercise_index, num_exercises, total_seconds
-    ):
+    def update_exercise_info(self, exercise_name, exercise_index, num_exercises):
         """Update information about the current exercise phase."""
         text = f"{exercise_name}\nExercise {exercise_index}/{num_exercises}"
         self.exercise_info.configure(text=text)
@@ -268,6 +333,12 @@ class App(customtkinter.CTk):
         """
         for callback in self.callbacks:
             self.after_cancel(callback)
+        self.start_workout_button.configure(state=tkinter.NORMAL)
+        self.pause_workout_button.configure(state=tkinter.DISABLED)
+        self.reset_workout_button.configure(state=tkinter.DISABLED)
+        self.workout = None
+        self.phase_remaining_seconds = None
+        self.phase_index = None
         self.callbacks = []
         self.exercise_info.configure(text="")
         self.clock.configure(text="")

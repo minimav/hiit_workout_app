@@ -97,6 +97,7 @@ class NextExercises:
 
     def update(self, exercise_names: list[str]):
         """Update the list of upcoming exercises after a phase change."""
+        self.clear()
         self.text_box.configure(state=tkinter.NORMAL)
         self.text_box.insert("0.0", "\n".join(exercise_names), "centered")
         self.text_box.configure(state=tkinter.DISABLED)
