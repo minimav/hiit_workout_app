@@ -3,6 +3,7 @@ import tkinter
 import customtkinter
 
 from exercise import Exercise, ExerciseManager, Rest
+from exercise_editor import ExerciseEditor
 from workout import (
     generate_workout,
     Phase,
@@ -10,6 +11,7 @@ from workout import (
     WorkoutManager,
     workout_from_config,
 )
+from workout_editor import WorkoutEditor
 
 
 class App(customtkinter.CTk):
@@ -67,10 +69,10 @@ class App(customtkinter.CTk):
 
         self.saved_workout_dropdown = customtkinter.CTkOptionMenu(
             master=self.workout,
-            values=["Custom"] + list(self.workout_manager.workouts.keys()),
             command=self.change_workout_type,
         )
         self.saved_workout_dropdown.pack(padx=10, pady=10)
+        self.update_saved_workouts()
 
         self.edit_workouts_button = customtkinter.CTkButton(
             master=self.workout, command=self.edit_workouts, text="Edit workouts"
@@ -156,11 +158,10 @@ class App(customtkinter.CTk):
         self.next_exercises = customtkinter.CTkTextbox(
             master=self.next_exercises_frame,
             state=tkinter.DISABLED,
-            width=self.width / 3,
             fg_color="gray17",
         )
         self.next_exercises.tag_config("centered", justify="center")
-        self.next_exercises.pack()
+        self.next_exercises.pack(fill="both")
 
     def create_phases_for_custom_workout(self):
         """Create phases for a custom workout using selected settings."""
@@ -326,6 +327,12 @@ class App(customtkinter.CTk):
         self.rest_duration_seconds_slider.set(value)
         self.rest_duration_info.configure(text=f"{int(value)} seconds/rest")
 
+    def update_saved_workouts(self):
+        """Update the saved workouts dropdown."""
+        values = ["Custom"] + list(self.workout_manager.workouts.keys())
+        self.saved_workout_dropdown.set(values[0])
+        self.saved_workout_dropdown.configure(values=values)
+
     def update_next_exercises(self, exercise_names: list[str]):
         """Update the list of upcoming exercises after a phase change."""
         self.next_exercises.configure(state=tkinter.NORMAL)
@@ -351,21 +358,22 @@ class App(customtkinter.CTk):
 
     def edit_workouts(self):
         """Pane for adding or removing workouts."""
-        window = customtkinter.CTkToplevel(self)
-        window.geometry("400x400")
-
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="hello")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        WorkoutEditor(
+            parent=self,
+            workout_manager=self.workout_manager,
+            on_close_callback=self.update_saved_workouts,
+        )
 
     def edit_exercises(self):
         """Pane for adding or removing exercises."""
-        window = customtkinter.CTkToplevel(self)
-        window.geometry("400x400")
-
-        # create label on CTkToplevel window
-        label = customtkinter.CTkLabel(window, text="hello")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        exercises_in_workouts = set()
+        for _, workout in self.workout_manager:
+            exercises_in_workouts.update(workout.exercises)
+        ExerciseEditor(
+            parent=self,
+            exercise_manager=self.exercise_manager,
+            exercises_in_workouts=exercises_in_workouts,
+        )
 
 
 if __name__ == "__main__":

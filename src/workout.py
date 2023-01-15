@@ -57,6 +57,9 @@ class WorkoutManager:
     def __getitem__(self, workout_name: str) -> WorkoutConfig:
         return self.workouts[workout_name]
 
+    def __iter__(self):
+        return iter(self.workouts.items())
+
     def load_workouts(self) -> dict[str, WorkoutConfig]:
         """Load previously stored workouts."""
         with open(self.path, "r") as f:

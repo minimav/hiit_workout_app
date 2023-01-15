@@ -38,6 +38,9 @@ class ExerciseManager:
     def __getitem__(self, exercise_name: str) -> Exercise:
         return self.exercises[exercise_name]
 
+    def __iter__(self):
+        return iter(self.exercises.items())
+
     def load_exercises(self) -> dict[str, Exercise]:
         """Load all possible exercises."""
         exercises = {}
