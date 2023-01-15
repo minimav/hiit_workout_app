@@ -77,13 +77,14 @@ class NextExercises:
         self.title = customtkinter.CTkLabel(
             master=self.frame,
             text="Next exercises",
-            font=("roboto", 20),
+            font=("roboto", 24),
             pady=10,
         ).pack()
         self.text_box = customtkinter.CTkTextbox(
             master=self.frame,
             state=tkinter.DISABLED,
             fg_color="gray17",
+            font=("roboto", 20),
         )
         self.text_box.tag_config("centered", justify="center")
         self.text_box.pack(fill="both")
