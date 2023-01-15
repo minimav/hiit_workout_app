@@ -4,6 +4,7 @@ import customtkinter
 
 from exercise import Exercise, ExerciseManager, Rest
 from exercise_editor import ExerciseEditor
+from gui_components import Slider
 from workout import (
     generate_workout,
     Phase,
@@ -16,10 +17,6 @@ from workout_editor import WorkoutEditor
 
 class App(customtkinter.CTk):
     """HIIT workout app main class."""
-
-    num_exercises_default: int = 10
-    exercise_duration_seconds_default: int = 30
-    rest_duration_seconds_default: int = 20
 
     def __init__(self, width=1000, height=550):
         super().__init__()
@@ -91,50 +88,33 @@ class App(customtkinter.CTk):
         )
         self.edit_exercises_button.pack(padx=10, pady=10)
 
-        self.num_exercises_info = customtkinter.CTkLabel(
-            master=self.workout,
-            font=("roboto", 18),
-        )
-        self.num_exercises_info.pack()
-        self.num_exercises_slider = customtkinter.CTkSlider(
-            master=self.workout,
+        self.workout_option_sliders: list[Slider] = []
+        self.num_exercises_slider = Slider(
+            parent=self.workout,
+            default=20,
             from_=10,
             to=30,
-            number_of_steps=20,
-            command=self.update_num_exercises_info,
+            label_template="{value} exercises",
         )
-        self.update_num_exercises_info(self.num_exercises_default)
-        self.num_exercises_slider.pack(padx=10, pady=10)
+        self.workout_option_sliders.append(self.num_exercises_slider)
 
-        self.exercise_duration_info = customtkinter.CTkLabel(
-            master=self.workout,
-            font=("roboto", 18),
-        )
-        self.exercise_duration_info.pack()
-        self.exercise_duration_seconds_slider = customtkinter.CTkSlider(
-            master=self.workout,
+        self.exercise_duration_seconds_slider = Slider(
+            parent=self.workout,
+            default=40,
             from_=30,
             to=120,
-            number_of_steps=90,
-            command=self.update_exercise_duration_info,
+            label_template="{value} seconds/exercise",
         )
-        self.update_exercise_duration_info(self.exercise_duration_seconds_default)
-        self.exercise_duration_seconds_slider.pack(padx=10, pady=10)
+        self.workout_option_sliders.append(self.exercise_duration_seconds_slider)
 
-        self.rest_duration_info = customtkinter.CTkLabel(
-            master=self.workout,
-            font=("roboto", 18),
-        )
-        self.rest_duration_info.pack()
-        self.rest_duration_seconds_slider = customtkinter.CTkSlider(
-            master=self.workout,
-            from_=5,
+        self.rest_duration_seconds_slider = Slider(
+            parent=self.workout,
+            default=20,
+            from_=10,
             to=60,
-            number_of_steps=55,
-            command=self.update_rest_duration_info,
+            label_template="{value} seconds/rest",
         )
-        self.update_rest_duration_info(self.rest_duration_seconds_default)
-        self.rest_duration_seconds_slider.pack(padx=10, pady=10)
+        self.workout_option_sliders.append(self.rest_duration_seconds_slider)
 
         self.start_workout_button = customtkinter.CTkButton(
             master=self.workout, command=self.start_workout, text="Start"
@@ -165,14 +145,11 @@ class App(customtkinter.CTk):
 
     def create_phases_for_custom_workout(self):
         """Create phases for a custom workout using selected settings."""
-        num_exercises = int(self.num_exercises_slider.get())
-        exercise_duration_seconds = int(self.exercise_duration_seconds_slider.get())
-        rest_duration_seconds = int(self.rest_duration_seconds_slider.get())
         return generate_workout(
             self.exercise_manager,
-            num_exercises,
-            exercise_duration_seconds=exercise_duration_seconds,
-            rest_duration_seconds=rest_duration_seconds,
+            num_exercises=self.num_exercises_slider.value,
+            exercise_duration_seconds=self.exercise_duration_seconds_slider.value,
+            rest_duration_seconds=self.rest_duration_seconds_slider.value,
         )
 
     def load_phases_for_saved_workout(self, workout_name: str) -> Workout:
@@ -312,21 +289,6 @@ class App(customtkinter.CTk):
         self.next_exercises.delete("0.0", "end")
         self.next_exercises.configure(state=tkinter.DISABLED)
 
-    def update_num_exercises_info(self, value):
-        """Update the # exercises after a slider change."""
-        self.num_exercises_slider.set(value)
-        self.num_exercises_info.configure(text=f"{int(value)} exercises")
-
-    def update_exercise_duration_info(self, value):
-        """Update the custom per-exercise duration after a slider change."""
-        self.exercise_duration_seconds_slider.set(value)
-        self.exercise_duration_info.configure(text=f"{int(value)} seconds/exercise")
-
-    def update_rest_duration_info(self, value):
-        """Update the custom per-rest duration after a slider change."""
-        self.rest_duration_seconds_slider.set(value)
-        self.rest_duration_info.configure(text=f"{int(value)} seconds/rest")
-
     def update_saved_workouts(self):
         """Update the saved workouts dropdown."""
         values = ["Custom"] + list(self.workout_manager.workouts.keys())
@@ -344,23 +306,29 @@ class App(customtkinter.CTk):
         self.saved_workout_dropdown.set(workout_name)
 
         # disable/enable customisation depending on type selected
-        state = tkinter.NORMAL if workout_name == "Custom" else tkinter.DISABLED
-        self.num_exercises_slider.configure(state=state)
-        self.exercise_duration_seconds_slider.configure(state=state)
-        self.rest_duration_seconds_slider.configure(state=state)
+        if workout_name != "Custom":
+            for slider in self.workout_option_sliders:
+                slider.disable()
+        else:
+            for slider in self.workout_option_sliders:
+                slider.enable()
 
         if workout_name != "Custom":
             workout = self.workout_manager[workout_name]
             num_exercises = workout.calculate_num_exercises(self.exercise_manager)
-            self.update_num_exercises_info(num_exercises)
-            self.update_exercise_duration_info(workout.exercise_duration_seconds)
-            self.update_rest_duration_info(workout.rest_duration_seconds)
+            self.num_exercises_slider.update(num_exercises)
+            self.exercise_duration_seconds_slider.update(
+                workout.exercise_duration_seconds
+            )
+            self.rest_duration_seconds_slider.update(workout.rest_duration_seconds)
 
     def edit_workouts(self):
         """Pane for adding or removing workouts."""
+        exercises = list(self.exercise_manager.exercises.keys())
         WorkoutEditor(
             parent=self,
             workout_manager=self.workout_manager,
+            exercises=exercises,
             on_close_callback=self.update_saved_workouts,
         )
 
