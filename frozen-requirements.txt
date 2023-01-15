@@ -8,6 +8,7 @@ darkdetect==0.7.1
 distlib==0.3.6
 exceptiongroup==1.1.0
 filelock==3.9.0
+hypothesis==6.62.1
 identify==2.5.13
 iniconfig==2.0.0
 macholib==1.16.2
@@ -24,6 +25,7 @@ pyinstaller-hooks-contrib==2022.14
 pytest==7.2.1
 PyYAML==6.0
 ruff==0.0.221
+sortedcontainers==2.4.0
 tomli==2.0.1
 typing_extensions==4.4.0
 virtualenv==20.17.1
