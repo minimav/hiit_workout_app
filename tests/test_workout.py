@@ -130,3 +130,28 @@ def test_remove_workout(workout_manager, workout_name):
     for manager in (workout_manager, new_workout_manager):
         assert current_num_workouts - 1 == len(manager)
         assert workout_name not in manager.workouts
+
+
+def test_exercises_in_workouts(workout_manager):
+    """Exercises in workouts should be retrieved correctly."""
+    # only first two are in a workout to begin with
+    all_exercises = [
+        "1-handed-exercise",
+        "2-handed-exercise",
+        "another-exercise",
+    ]
+    workout_manager.exercises = all_exercises
+    assert workout_manager.exercises_in_workouts == {
+        "1-handed-exercise",
+        "2-handed-exercise",
+    }
+
+    # add workout that uses the other exercise
+    config = WorkoutConfig(
+        exercise_duration_seconds=30,
+        rest_duration_seconds=30,
+        exercises=["another-exercise"],
+    )
+    workout_manager.add_workout("new-workout", config)
+    # now all exercises should be in a workout
+    assert workout_manager.exercises_in_workouts == set(all_exercises)
