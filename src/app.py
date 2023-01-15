@@ -4,7 +4,7 @@ import customtkinter
 
 from exercise import Exercise, ExerciseManager, Rest
 from exercise_editor import ExerciseEditor
-from gui_components import Slider
+from gui_components import NextExercises, Slider
 from workout import (
     generate_workout,
     Phase,
@@ -125,23 +125,10 @@ class App(customtkinter.CTk):
         )
         self.reset_workout_button.pack(padx=10, pady=10)
 
-        self.next_exercises_frame = customtkinter.CTkFrame(self, corner_radius=0)
-        self.next_exercises_frame.grid(
+        grid_kwargs = dict(
             row=2, rowspan=1, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
-        self.next_exercises_title = customtkinter.CTkLabel(
-            master=self.next_exercises_frame,
-            text="Next exercises",
-            font=("roboto", 20),
-            pady=10,
-        ).pack()
-        self.next_exercises = customtkinter.CTkTextbox(
-            master=self.next_exercises_frame,
-            state=tkinter.DISABLED,
-            fg_color="gray17",
-        )
-        self.next_exercises.tag_config("centered", justify="center")
-        self.next_exercises.pack(fill="both")
+        self.next_exercises = NextExercises(self, grid_kwargs)
 
     def create_phases_for_custom_workout(self):
         """Create phases for a custom workout using selected settings."""
@@ -234,7 +221,7 @@ class App(customtkinter.CTk):
 
                 callback = self.after(
                     total_milliseconds,
-                    self.update_next_exercises,
+                    self.next_exercises.update,
                     exercise_names[exercise_index:],
                 )
                 self.callbacks.append(callback)
@@ -285,21 +272,13 @@ class App(customtkinter.CTk):
         self.exercise_info.configure(text="")
         self.clock.configure(text="")
         self.countdown.configure(fg_color="gray17")
-        self.next_exercises.configure(state=tkinter.NORMAL)
-        self.next_exercises.delete("0.0", "end")
-        self.next_exercises.configure(state=tkinter.DISABLED)
+        self.next_exercises.clear()
 
     def update_saved_workouts(self):
         """Update the saved workouts dropdown."""
         values = ["Custom"] + list(self.workout_manager.workouts.keys())
         self.saved_workout_dropdown.set(values[0])
         self.saved_workout_dropdown.configure(values=values)
-
-    def update_next_exercises(self, exercise_names: list[str]):
-        """Update the list of upcoming exercises after a phase change."""
-        self.next_exercises.configure(state=tkinter.NORMAL)
-        self.next_exercises.insert("0.0", "\n".join(exercise_names), "centered")
-        self.next_exercises.configure(state=tkinter.DISABLED)
 
     def change_workout_type(self, workout_name):
         """Change workout type via dropdown."""

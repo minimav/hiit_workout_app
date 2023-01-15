@@ -66,3 +66,36 @@ class Slider:
             button_color="gray",
             button_hover_color="gray",
         )
+
+
+class NextExercises:
+    """Text box containing list of upcoming exercises."""
+
+    def __init__(self, parent, grid_kwargs: dict):
+        self.frame = customtkinter.CTkFrame(parent, corner_radius=0)
+        self.frame.grid(**grid_kwargs)
+        self.title = customtkinter.CTkLabel(
+            master=self.frame,
+            text="Next exercises",
+            font=("roboto", 20),
+            pady=10,
+        ).pack()
+        self.text_box = customtkinter.CTkTextbox(
+            master=self.frame,
+            state=tkinter.DISABLED,
+            fg_color="gray17",
+        )
+        self.text_box.tag_config("centered", justify="center")
+        self.text_box.pack(fill="both")
+
+    def clear(self):
+        """Clear the text box."""
+        self.text_box.configure(state=tkinter.NORMAL)
+        self.text_box.delete("0.0", "end")
+        self.text_box.configure(state=tkinter.DISABLED)
+
+    def update(self, exercise_names: list[str]):
+        """Update the list of upcoming exercises after a phase change."""
+        self.text_box.configure(state=tkinter.NORMAL)
+        self.text_box.insert("0.0", "\n".join(exercise_names), "centered")
+        self.text_box.configure(state=tkinter.DISABLED)
