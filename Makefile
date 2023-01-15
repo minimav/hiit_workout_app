@@ -33,3 +33,6 @@ build:
 		--add-data $$(pip show customtkinter | grep Location | cut -d " " -f2)/customtkinter:customtkinter/ \
 		--add-data="src/*.json:src" \
 		src/app.py
+
+gitmoji:
+	git log --oneline | grep -o -e ':.*:' | sort | uniq -c | sort -nr
