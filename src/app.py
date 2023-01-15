@@ -313,13 +313,10 @@ class App(customtkinter.CTk):
 
     def edit_exercises(self):
         """Pane for adding or removing exercises."""
-        exercises_in_workouts = set()
-        for _, workout in self.workout_manager:
-            exercises_in_workouts.update(workout.exercises)
         ExerciseEditor(
             parent=self,
             exercise_manager=self.exercise_manager,
-            exercises_in_workouts=exercises_in_workouts,
+            exercises_in_workouts=self.workout_manager.exercises_in_workouts,
         )
 
 

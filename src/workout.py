@@ -87,6 +87,14 @@ class WorkoutManager:
         with open(self.path, "w") as f:
             json.dump(workouts, f)
 
+    @property
+    def exercises_in_workouts(self) -> set[str]:
+        """Get all exercises which appear in any saved workout"""
+        exercises = set()
+        for workout in self.workouts.values():
+            exercises.update(workout.exercises)
+        return exercises
+
 
 def apply_workout_correction(workout: Workout) -> Workout:
     """Apply correction for going over limit via 1-handed variations.
