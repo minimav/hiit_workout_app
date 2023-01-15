@@ -23,7 +23,9 @@ class WorkoutEditor:
         self.workout_manager = workout_manager
         self.exercises = exercises
         self.on_close_callback = on_close_callback
-        self.window.geometry("400x600")
+        self.window.geometry("600x650")
+        self.window.grid_rowconfigure((0,), weight=1)
+        self.window.grid_columnconfigure((0, 1), weight=1)
 
         def on_closing():
             on_close_callback()
@@ -31,18 +33,29 @@ class WorkoutEditor:
 
         self.window.protocol("WM_DELETE_WINDOW", on_closing)
 
+        self.add_frame = customtkinter.CTkFrame(
+            self.window,
+            corner_radius=0,
+        )
+        self.add_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.remove_frame = customtkinter.CTkFrame(
+            self.window,
+            corner_radius=0,
+        )
+        self.remove_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+
         self.add_workout_label = customtkinter.CTkLabel(
-            self.window, text="Add workout", font=("roboto", 24)
+            self.add_frame, text="Add workout", font=("roboto", 24)
         )
         self.add_workout_label.pack(side="top", fill="both", padx=10, pady=10)
 
         self.new_workout_exercises: list[str] = []
-        self.new_workout_name = customtkinter.CTkTextbox(self.window, height=20)
+        self.new_workout_name = customtkinter.CTkTextbox(self.add_frame, height=20)
         self.new_workout_name.insert("0.0", "Workout name")
         self.new_workout_name.pack(side="top", padx=10, pady=10)
 
         self.exercise_duration_seconds_slider = Slider(
-            parent=self.window,
+            parent=self.add_frame,
             default=40,
             from_=30,
             to=120,
@@ -50,7 +63,7 @@ class WorkoutEditor:
         )
 
         self.rest_duration_seconds_slider = Slider(
-            parent=self.window,
+            parent=self.add_frame,
             default=20,
             from_=10,
             to=60,
@@ -58,41 +71,41 @@ class WorkoutEditor:
         )
 
         self.exercises_dropdown = customtkinter.CTkOptionMenu(
-            master=self.window,
+            master=self.add_frame,
             values=self.exercises,
             command=self.add_exercise_to_workout,
         )
         self.exercises_dropdown.pack(padx=10, pady=10)
 
         self.new_workout_exercises_text_box = customtkinter.CTkTextbox(
-            master=self.window,
+            master=self.add_frame,
             state=tkinter.DISABLED,
         )
         self.new_workout_exercises_text_box.pack(padx=10, pady=10)
         self.remove_exercise_from_workout_button = customtkinter.CTkButton(
-            master=self.window,
+            master=self.add_frame,
             command=self.remove_exercise_from_workout,
             text="Remove exercise",
         )
         self.remove_exercise_from_workout_button.pack(padx=10, pady=10)
 
         self.add_workout_button = customtkinter.CTkButton(
-            master=self.window, command=self.add_workout, text="Add"
+            master=self.add_frame, command=self.add_workout, text="Add"
         )
         self.add_workout_button.pack(padx=10, pady=10)
 
         self.remove_workout_label = customtkinter.CTkLabel(
-            self.window, text="Remove workout", font=("roboto", 24)
+            self.remove_frame, text="Remove workout", font=("roboto", 24)
         )
         self.remove_workout_label.pack(side="top", fill="both", padx=10, pady=10)
 
         self.workouts_dropdown = customtkinter.CTkOptionMenu(
-            master=self.window, values=list(self.workout_manager.workouts.keys())
+            master=self.remove_frame, values=list(self.workout_manager.workouts.keys())
         )
         self.workouts_dropdown.pack(padx=10, pady=10)
 
         self.remove_workout_button = customtkinter.CTkButton(
-            master=self.window, command=self.remove_workout, text="Remove"
+            master=self.remove_frame, command=self.remove_workout, text="Remove"
         )
         self.remove_workout_button.pack(padx=10, pady=10)
 
