@@ -18,9 +18,8 @@ class App(customtkinter.CTk):
     num_exercises_default: int = 10
     exercise_duration_seconds_default: int = 30
     rest_duration_seconds_default: int = 20
-    num_next_exercises: int = 10
 
-    def __init__(self, width=1000, height=500):
+    def __init__(self, width=1000, height=550):
         super().__init__()
         self.width = width
         self.height = height
@@ -35,9 +34,11 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
 
-        self.countdown = customtkinter.CTkFrame(self, corner_radius=0)
+        self.countdown = customtkinter.CTkFrame(
+            self, corner_radius=0, height=2 * self.height / 3
+        )
         self.countdown.grid(
-            row=0, rowspan=2, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
+            row=0, rowspan=1, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
         self.clock = customtkinter.CTkLabel(
             master=self.countdown, text="", font=("roboto", 96)
@@ -49,8 +50,16 @@ class App(customtkinter.CTk):
         self.exercise_info.place(relx=0.5, rely=0.2, anchor=tkinter.CENTER)
         self.callbacks = []
 
-        self.workout = customtkinter.CTkFrame(self, width=50, corner_radius=0)
-        self.workout.grid(row=0, column=0, rowspan=3, padx=10, pady=10, sticky="nsew")
+        self.workout = customtkinter.CTkFrame(self, corner_radius=0)
+        self.workout.grid(
+            row=0,
+            column=0,
+            rowspan=3,
+            columnspan=1,
+            padx=10,
+            pady=10,
+            sticky="nsew",
+        )
 
         self.options_title = customtkinter.CTkLabel(
             master=self.workout, text="Workout options", font=("roboto", 24), pady=10
@@ -63,12 +72,22 @@ class App(customtkinter.CTk):
         )
         self.saved_workout_dropdown.pack(padx=10, pady=10)
 
+        self.edit_workouts_button = customtkinter.CTkButton(
+            master=self.workout, command=self.edit_workouts, text="Edit workouts"
+        )
+        self.edit_workouts_button.pack(padx=10, pady=10)
+
         self.options_title = customtkinter.CTkLabel(
             master=self.workout,
             text="Customise",
             font=("roboto", 20),
             pady=10,
         ).pack()
+
+        self.edit_exercises_button = customtkinter.CTkButton(
+            master=self.workout, command=self.edit_exercises, text="Edit exercises"
+        )
+        self.edit_exercises_button.pack(padx=10, pady=10)
 
         self.num_exercises_info = customtkinter.CTkLabel(
             master=self.workout,
@@ -126,7 +145,7 @@ class App(customtkinter.CTk):
 
         self.next_exercises_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.next_exercises_frame.grid(
-            row=2, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
+            row=2, rowspan=1, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
         self.next_exercises_title = customtkinter.CTkLabel(
             master=self.next_exercises_frame,
@@ -238,9 +257,7 @@ class App(customtkinter.CTk):
                 callback = self.after(
                     total_milliseconds,
                     self.update_next_exercises,
-                    exercise_names[
-                        exercise_index : exercise_index + self.num_next_exercises
-                    ],
+                    exercise_names[exercise_index:],
                 )
                 self.callbacks.append(callback)
 
@@ -331,6 +348,24 @@ class App(customtkinter.CTk):
             self.update_num_exercises_info(num_exercises)
             self.update_exercise_duration_info(workout.exercise_duration_seconds)
             self.update_rest_duration_info(workout.rest_duration_seconds)
+
+    def edit_workouts(self):
+        """Pane for adding or removing workouts."""
+        window = customtkinter.CTkToplevel(self)
+        window.geometry("400x400")
+
+        # create label on CTkToplevel window
+        label = customtkinter.CTkLabel(window, text="hello")
+        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+
+    def edit_exercises(self):
+        """Pane for adding or removing exercises."""
+        window = customtkinter.CTkToplevel(self)
+        window.geometry("400x400")
+
+        # create label on CTkToplevel window
+        label = customtkinter.CTkLabel(window, text="hello")
+        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
 
 
 if __name__ == "__main__":
