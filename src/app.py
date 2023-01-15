@@ -18,6 +18,7 @@ class App(customtkinter.CTk):
     num_exercises_default: int = 10
     exercise_duration_seconds_default: int = 30
     rest_duration_seconds_default: int = 20
+    num_next_exercises: int = 7
 
     def __init__(self):
         super().__init__()
@@ -40,11 +41,11 @@ class App(customtkinter.CTk):
         self.clock = customtkinter.CTkLabel(
             master=self.countdown, text="", font=("roboto", 96)
         )
-        self.clock.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+        self.clock.place(relx=0.5, rely=0.6, anchor=tkinter.CENTER)
         self.exercise_info = customtkinter.CTkLabel(
             master=self.countdown, text="", font=("roboto", 36)
         )
-        self.exercise_info.place(relx=0.5, rely=0.15, anchor=tkinter.CENTER)
+        self.exercise_info.place(relx=0.5, rely=0.2, anchor=tkinter.CENTER)
         self.callbacks = []
 
         self.workout = customtkinter.CTkFrame(self, width=50, corner_radius=0)
@@ -122,18 +123,22 @@ class App(customtkinter.CTk):
         )
         self.reset_workout_button.pack(padx=10, pady=10)
 
-        self.exercises = customtkinter.CTkFrame(self, height=50, corner_radius=0)
-        self.exercises.grid(
+        self.next_exercises_frame = customtkinter.CTkFrame(
+            self, height=50, corner_radius=0
+        )
+        self.next_exercises_frame.grid(
             row=1, column=1, columnspan=3, padx=10, pady=10, sticky="nsew"
         )
-        self.exercises_title = customtkinter.CTkLabel(
-            master=self.exercises,
+        self.next_exercises_title = customtkinter.CTkLabel(
+            master=self.next_exercises_frame,
             text="Next exercises",
             font=("roboto", 20),
             pady=10,
         ).pack()
-        self.exercise_list = customtkinter.CTkLabel(master=self.exercises, text="")
-        self.exercise_list.pack()
+        self.next_exercises = customtkinter.CTkLabel(
+            master=self.next_exercises_frame, text="\n" * (self.num_next_exercises - 1)
+        )
+        self.next_exercises.pack()
 
     def create_phases_for_custom_workout(self):
         """Create phases for a custom workout using selected settings."""
@@ -229,8 +234,10 @@ class App(customtkinter.CTk):
 
                 callback = self.after(
                     total_milliseconds,
-                    self.update_exercise_list,
-                    exercise_names[exercise_index : exercise_index + 5],
+                    self.update_next_exercises,
+                    exercise_names[
+                        exercise_index : exercise_index + self.num_next_exercises
+                    ],
                 )
                 self.callbacks.append(callback)
 
@@ -280,7 +287,7 @@ class App(customtkinter.CTk):
         self.exercise_info.configure(text="")
         self.clock.configure(text="")
         self.countdown.configure(fg_color="gray17")
-        self.exercise_list.configure(text="")
+        self.next_exercises.configure(text="\n" * (self.num_next_exercises - 1))
 
     def update_num_exercises_info(self, value):
         """Update the # exercises after a slider change."""
@@ -297,9 +304,9 @@ class App(customtkinter.CTk):
         self.rest_duration_seconds_slider.set(value)
         self.rest_duration_info.configure(text=f"{int(value)} seconds/rest")
 
-    def update_exercise_list(self, exercise_names: list[str]):
+    def update_next_exercises(self, exercise_names: list[str]):
         """Update the list of upcoming exercises after a phase change."""
-        self.exercise_list.configure(text="\n".join(exercise_names))
+        self.next_exercises.configure(text="\n".join(exercise_names))
 
     def change_workout_type(self, workout_name):
         """Change workout type via dropdown."""
