@@ -30,8 +30,3 @@ Either `pytest tests` or `make test`.
 ## Building
 
 To build the app as an exe or equivalent for your OS, run `make build`. The resulting artefact will be in the `dist` folder.
-
-## Todo
-
-* Able to add new exercises
-* Able to save workouts
