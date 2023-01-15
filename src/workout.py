@@ -163,7 +163,6 @@ def workout_from_config(
     rest_phase = Phase(config.rest_duration_seconds, Rest())
     workout = []
     for exercise_name in config.exercises:
-        workout.append(rest_phase)
         exercise = exercise_manager[exercise_name]
 
         if exercise.single_handed_variations:
@@ -174,5 +173,6 @@ def workout_from_config(
                     Phase(config.exercise_duration_seconds, one_sided_exercise)
                 )
         else:
+            workout.append(rest_phase)
             workout.append(Phase(config.exercise_duration_seconds, exercise))
     return workout

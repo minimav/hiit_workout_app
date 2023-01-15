@@ -241,6 +241,4 @@ def test_workout_from_config_has_rests_in_between_exercises(
         ),
     )
     workout = workout_from_config(exercise_manager_with_more_exercises, workout_config)
-    print()
-    print(workout)
     validate_rest_exercise_interleaving(workout)
