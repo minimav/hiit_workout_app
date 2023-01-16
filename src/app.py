@@ -9,6 +9,7 @@ import PIL
 from exercise import Exercise, ExerciseManager, Rest
 from exercise_editor import ExerciseEditor
 from gui_components import NextExercises, Slider
+from utils import get_path_to_file
 from workout import (
     generate_workout,
     Phase,
@@ -29,9 +30,9 @@ COLOURS = {
 ASSETS_FOLDER = Path("src") / "assets"
 
 ICONS = {
-    "play": ASSETS_FOLDER / "play_light.png",
-    "pause": ASSETS_FOLDER / "pause_light.png",
-    "stop": ASSETS_FOLDER / "stop_light.png",
+    "play": get_path_to_file(ASSETS_FOLDER / "play_light.png"),
+    "pause": get_path_to_file(ASSETS_FOLDER / "pause_light.png"),
+    "stop": get_path_to_file(ASSETS_FOLDER / "stop_light.png"),
 }
 
 

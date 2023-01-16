@@ -32,6 +32,7 @@ build:
 		--windowed \
 		--add-data $$(pip show customtkinter | grep Location | cut -d " " -f2)/customtkinter:customtkinter/ \
 		--add-data="src/data/*.json:src/data" \
+		--add-data="src/assets/*.png:src/assets" \
 		src/app.py
 
 gitmoji:
