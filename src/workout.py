@@ -46,7 +46,7 @@ class WorkoutManager:
 
     def __init__(
         self,
-        path: Path = Path("src") / "workouts.json",
+        path: Path = Path("src") / "data" / "workouts.json",
     ):
         self.path = get_path_to_file(path)
         self.workouts = self.load_workouts()

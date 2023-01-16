@@ -27,7 +27,7 @@ class ExerciseManager:
 
     def __init__(
         self,
-        path: Path = Path("src") / "exercises.json",
+        path: Path = Path("src") / "data" / "exercises.json",
     ):
         self.path = get_path_to_file(path)
         self.exercises = self.load_exercises()

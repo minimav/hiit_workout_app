@@ -17,7 +17,9 @@ def exercise_manager(tmpdir) -> ExerciseManager:
         "1-handed-exercise": {"single_handed_variations": True},
         "2-handed-exercise": {"single_handed_variations": False},
     }
-    path = tmpdir / "exercises.json"
+    folder = tmpdir / "data"
+    folder.mkdir()
+    path = folder / "exercises.json"
     with open(path, "w") as f:
         json.dump(exercises, f)
 
@@ -31,7 +33,9 @@ def exercise_manager_with_more_exercises(tmpdir) -> ExerciseManager:
     for suffix in string.ascii_lowercase:
         exercises[f"1-handed-exercise-{suffix}"] = {"single_handed_variations": True}
         exercises[f"2-handed-exercise-{suffix}"] = {"single_handed_variations": False}
-    path = tmpdir / "exercises.json"
+    folder = tmpdir / "data"
+    folder.mkdir()
+    path = folder / "exercises.json"
     with open(path, "w") as f:
         json.dump(exercises, f)
 
@@ -59,7 +63,9 @@ def workout_manager(tmpdir) -> WorkoutManager:
             ],
         },
     }
-    path = tmpdir / "workouts.json"
+    folder = tmpdir / "data"
+    folder.mkdir()
+    path = folder / "workouts.json"
     with open(path, "w") as f:
         json.dump(workouts, f)
 
