@@ -1,8 +1,10 @@
 """HIIT workout app."""
+from pathlib import Path
 from typing import Optional
 
-import tkinter
 import customtkinter
+import tkinter
+import PIL
 
 from exercise import Exercise, ExerciseManager, Rest
 from exercise_editor import ExerciseEditor
@@ -21,6 +23,15 @@ COLOURS = {
     "orange": "#E2AD21",
     "green": "#40BB25",
     "red": "#C62C24",
+    "background": "gray17",
+}
+
+ASSETS_FOLDER = Path("src") / "assets"
+
+ICONS = {
+    "play": ASSETS_FOLDER / "play_light.png",
+    "pause": ASSETS_FOLDER / "pause_light.png",
+    "stop": ASSETS_FOLDER / "stop_light.png",
 }
 
 
@@ -140,28 +151,49 @@ class App(customtkinter.CTk):
         )
         self.workout_buttons.pack()
 
+        self.button_fg_colours = {
+            "start": COLOURS["green"],
+            "stop": COLOURS["red"],
+            "pause": "grey",
+        }
         self.start_workout_button = customtkinter.CTkButton(
-            master=self.workout_buttons, command=self.start_workout, text="Start"
+            master=self.workout_buttons,
+            command=self.start_workout,
+            text="Start",
+            image=customtkinter.CTkImage(PIL.Image.open(ICONS["play"])),
         )
         self.start_workout_button.configure(
-            state=tkinter.NORMAL, width=60, fg_color=COLOURS["green"]
+            state=tkinter.NORMAL,
+            width=60,
+            fg_color=self.button_fg_colours["start"],
+            text_color_disabled="white",
         )
         self.start_workout_button.pack(padx=10, pady=10, side="left")
-        self.reset_workout_button = customtkinter.CTkButton(
-            master=self.workout_buttons, command=self.reset_timer, text="Reset"
+        self.stop_workout_button = customtkinter.CTkButton(
+            master=self.workout_buttons,
+            command=self.stop_timer,
+            text="Stop",
+            image=customtkinter.CTkImage(PIL.Image.open(ICONS["stop"])),
         )
-        self.reset_workout_button.configure(
-            state=tkinter.DISABLED, width=60, fg_color=COLOURS["red"]
+        self.stop_workout_button.configure(
+            state=tkinter.DISABLED,
+            width=60,
+            fg_color=COLOURS["background"],
+            text_color_disabled="white",
         )
-        self.reset_workout_button.pack(padx=10, pady=10, side="left")
+        self.stop_workout_button.pack(padx=10, pady=10, side="left")
 
         self.pause_workout_button = customtkinter.CTkButton(
             master=self.workout_buttons,
             command=self.pause,
             text="Pause workout",
+            image=customtkinter.CTkImage(PIL.Image.open(ICONS["pause"])),
         )
         self.pause_workout_button.configure(
-            state=tkinter.DISABLED, width=120, fg_color="grey"
+            state=tkinter.DISABLED,
+            width=120,
+            fg_color=COLOURS["background"],
+            text_color_disabled="white",
         )
         self.pause_workout_button.pack(padx=10, pady=10, side="left")
 
@@ -172,9 +204,17 @@ class App(customtkinter.CTk):
 
     def pause(self):
         """Pause the current workout."""
-        self.start_workout_button.configure(state=tkinter.NORMAL)
-        self.pause_workout_button.configure(state=tkinter.DISABLED)
-        self.reset_workout_button.configure(state=tkinter.NORMAL)
+        self.start_workout_button.configure(
+            state=tkinter.NORMAL,
+            fg_color=self.button_fg_colours["start"],
+        )
+        self.pause_workout_button.configure(
+            state=tkinter.DISABLED, fg_color=COLOURS["background"]
+        )
+        self.stop_workout_button.configure(
+            state=tkinter.NORMAL,
+            fg_color=self.button_fg_colours["stop"],
+        )
         for callback in self.callbacks:
             self.after_cancel(callback)
         self.callbacks = []
@@ -222,16 +262,25 @@ class App(customtkinter.CTk):
 
         """
         if self.workout is None:
-            self.reset_timer()
+            self.stop_timer()
             saved_workout_dropdown_value = self.saved_workout_dropdown._current_value
             if saved_workout_dropdown_value == "Custom":
                 self.create_phases_for_custom_workout()
             else:
                 self.load_phases_for_saved_workout(saved_workout_dropdown_value)
 
-        self.start_workout_button.configure(state=tkinter.DISABLED)
-        self.reset_workout_button.configure(state=tkinter.NORMAL)
-        self.pause_workout_button.configure(state=tkinter.NORMAL)
+        self.start_workout_button.configure(
+            state=tkinter.DISABLED,
+            fg_color=COLOURS["background"],
+        )
+        self.stop_workout_button.configure(
+            state=tkinter.NORMAL,
+            fg_color=self.button_fg_colours["stop"],
+        )
+        self.pause_workout_button.configure(
+            state=tkinter.NORMAL,
+            fg_color=self.button_fg_colours["pause"],
+        )
 
         self.generate_countdown_callbacks()
 
@@ -303,7 +352,7 @@ class App(customtkinter.CTk):
                 self.callbacks.append(callback)
                 total_milliseconds += 1000
 
-        callback = self.after(total_milliseconds, self.reset_timer)
+        callback = self.after(total_milliseconds, self.stop_timer)
         self.callbacks.append(callback)
 
     def update_clock(self, seconds: int, phase_index: int):
@@ -326,16 +375,23 @@ class App(customtkinter.CTk):
         """Change the countdown background colour to reflect phase type."""
         self.countdown.configure(fg_color=fg_color)
 
-    def reset_timer(self):
-        """Rest all timer/countdown information.
+    def stop_timer(self):
+        """Stop all timer/countdown information and clear display.
 
-        This can occur if the workout is manually reset or finishes naturally.
+        This can occur if the workout is manually stopped or finishes naturally.
         """
         for callback in self.callbacks:
             self.after_cancel(callback)
-        self.start_workout_button.configure(state=tkinter.NORMAL)
-        self.pause_workout_button.configure(state=tkinter.DISABLED)
-        self.reset_workout_button.configure(state=tkinter.DISABLED)
+        self.start_workout_button.configure(
+            state=tkinter.NORMAL,
+            fg_color=self.button_fg_colours["start"],
+        )
+        self.pause_workout_button.configure(
+            state=tkinter.DISABLED, fg_color=COLOURS["background"]
+        )
+        self.stop_workout_button.configure(
+            state=tkinter.DISABLED, fg_color=COLOURS["background"]
+        )
         self.workout = None
         self.phase_remaining_seconds = None
         self.phase_index = None
