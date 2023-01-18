@@ -5,6 +5,7 @@ from typing import Optional
 import customtkinter
 import tkinter
 import PIL
+import playsound
 
 from exercise import Exercise, ExerciseManager, Rest
 from exercise_editor import ExerciseEditor
@@ -145,6 +146,14 @@ class App(customtkinter.CTk):
             label_template="{value} seconds/rest",
         )
         self.workout_option_sliders.append(self.rest_duration_seconds_slider)
+
+        self.play_sound = tkinter.BooleanVar()
+        self.play_sound_checkbox = customtkinter.CTkCheckBox(
+            master=self.workout_frame,
+            text="Play countdown sound",
+            variable=self.play_sound,
+        )
+        self.play_sound_checkbox.pack()
 
         self.workout_buttons = customtkinter.CTkFrame(
             self.workout_frame,
@@ -344,13 +353,23 @@ class App(customtkinter.CTk):
                 seconds_left_in_phase = phase.duration_seconds
 
             for elapsed_seconds in range(seconds_left_in_phase):
+                remaining_seconds = seconds_left_in_phase - elapsed_seconds
                 callback = self.after(
                     total_milliseconds,
                     self.update_clock,
-                    seconds_left_in_phase - elapsed_seconds,
+                    remaining_seconds,
                     phase_index,
                 )
                 self.callbacks.append(callback)
+
+                if self.play_sound.get() and remaining_seconds <= 3:
+                    sound_callback = self.after(
+                        total_milliseconds,
+                        playsound.playsound,
+                        ASSETS_FOLDER / "beep.mp3",
+                        False,
+                    )
+                    self.callbacks.append(sound_callback)
                 total_milliseconds += 1000
 
         callback = self.after(total_milliseconds, self.stop_timer)
