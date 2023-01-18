@@ -366,7 +366,7 @@ class App(customtkinter.CTk):
                     sound_callback = self.after(
                         total_milliseconds,
                         playsound.playsound,
-                        ASSETS_FOLDER / "beep.mp3",
+                        get_path_to_file(ASSETS_FOLDER / "beep.mp3"),
                         False,
                     )
                     self.callbacks.append(sound_callback)
