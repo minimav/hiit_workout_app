@@ -13,7 +13,7 @@ start-dev:  ## Start the app using local source code
 	python src/app.py
 
 start:  ## Start the app using a built version (mac-only)
-	open -n ./dist/app --args AppCommandLineArg
+	open -n ./dist/app/app --args AppCommandLineArg
 
 test:  ## Run the unit tests
 	pytest tests
