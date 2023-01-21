@@ -1,1 +1,116 @@
-{"2-handed swing": {"single_handed_variations": false}, "1-handed swing": {"single_handed_variations": true}, "1-handed swing (switch)": {"single_handed_variations": false}, "Goblet squat": {"single_handed_variations": false}, "Sumo deadlift": {"single_handed_variations": false}, "Reverse lunge": {"single_handed_variations": true}, "Thruster": {"single_handed_variations": true}, "Halo": {"single_handed_variations": false}, "High knee twist": {"single_handed_variations": false}, "Triceps dip": {"single_handed_variations": false}, "Sit up twist": {"single_handed_variations": false}, "Plank slide through": {"single_handed_variations": false}, "Rack -> overhead thrust": {"single_handed_variations": true}, "Floor -> rack -> overhead thrust": {"single_handed_variations": true}, "Uneven press ups": {"single_handed_variations": true}, "2-handed swing squat combo": {"single_handed_variations": false}, "2-handed overhead thrust": {"single_handed_variations": false}, "Press ups": {"single_handed_variations": false}, "Chest press ups": {"single_handed_variations": false}, "Inclined press ups": {"single_handed_variations": false}, "Plank": {"single_handed_variations": false}, "Press up plank": {"single_handed_variations": false}, "1-handed farmers walk": {"single_handed_variations": true}, "2-handed farmers walk": {"single_handed_variations": false}, "Curtsey": {"single_handed_variations": true}, "Single arm row": {"single_handed_variations": true}, "Overhead marches": {"single_handed_variations": true}, "Overhead reverse lunges": {"single_handed_variations": true}, "Romanian deadlift": {"single_handed_variations": false}, "Kneeling overhead push": {"single_handed_variations": true}, "Inverted row": {"single_handed_variations": false}, "Inverted row chin-up": {"single_handed_variations": false}, "Around the waist": {"single_handed_variations": true}, "2-handed biceps curl": {"single_handed_variations": false}, "Snatch": {"single_handed_variations": true}, "Renegade row": {"single_handed_variations": true}, "Upright row switches": {"single_handed_variations": false}, "Weighted bridge": {"single_handed_variations": false}}
+{
+  "1-handed farmers walk": {
+    "single_handed_variations": true
+  },
+  "1-handed swing": {
+    "single_handed_variations": true
+  },
+  "1-handed swing (switch)": {
+    "single_handed_variations": false
+  },
+  "2-handed biceps curl": {
+    "single_handed_variations": false
+  },
+  "2-handed farmers walk": {
+    "single_handed_variations": false
+  },
+  "2-handed overhead thrust": {
+    "single_handed_variations": false
+  },
+  "2-handed swing": {
+    "single_handed_variations": false
+  },
+  "2-handed swing squat combo": {
+    "single_handed_variations": false
+  },
+  "Around the waist": {
+    "single_handed_variations": true
+  },
+  "Chest press ups": {
+    "single_handed_variations": false
+  },
+  "Curtsey": {
+    "single_handed_variations": true
+  },
+  "Floor -> rack -> overhead thrust": {
+    "single_handed_variations": true
+  },
+  "Goblet squat": {
+    "single_handed_variations": false
+  },
+  "Halo": {
+    "single_handed_variations": false
+  },
+  "High knee twist": {
+    "single_handed_variations": false
+  },
+  "Inclined press ups": {
+    "single_handed_variations": false
+  },
+  "Inverted row": {
+    "single_handed_variations": false
+  },
+  "Inverted row chin-up": {
+    "single_handed_variations": false
+  },
+  "Kneeling overhead push": {
+    "single_handed_variations": true
+  },
+  "Overhead marches": {
+    "single_handed_variations": true
+  },
+  "Overhead reverse lunges": {
+    "single_handed_variations": true
+  },
+  "Plank": {
+    "single_handed_variations": false
+  },
+  "Plank slide through": {
+    "single_handed_variations": false
+  },
+  "Press up plank": {
+    "single_handed_variations": false
+  },
+  "Press ups": {
+    "single_handed_variations": false
+  },
+  "Rack -> overhead thrust": {
+    "single_handed_variations": true
+  },
+  "Renegade row": {
+    "single_handed_variations": true
+  },
+  "Reverse lunge": {
+    "single_handed_variations": true
+  },
+  "Romanian deadlift": {
+    "single_handed_variations": false
+  },
+  "Single arm row": {
+    "single_handed_variations": true
+  },
+  "Sit up twist": {
+    "single_handed_variations": false
+  },
+  "Snatch": {
+    "single_handed_variations": true
+  },
+  "Sumo deadlift": {
+    "single_handed_variations": false
+  },
+  "Thruster": {
+    "single_handed_variations": true
+  },
+  "Triceps dip": {
+    "single_handed_variations": false
+  },
+  "Uneven press ups": {
+    "single_handed_variations": true
+  },
+  "Upright row switches": {
+    "single_handed_variations": false
+  },
+  "Weighted bridge": {
+    "single_handed_variations": false
+  }
+}
