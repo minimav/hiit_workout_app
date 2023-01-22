@@ -1,4 +1,4 @@
-.PHONY: build, help
+.PHONY: build help
 .DEFAULT_GOAL := help
 
 help:
@@ -40,6 +40,7 @@ build:  ## Build the app as an executable (mac-only)
 		--add-data $$(pip show customtkinter | grep Location | cut -d " " -f2)/customtkinter:customtkinter/ \
 		--add-data="src/data/*.json:src/data" \
 		--add-data="src/assets/*.png:src/assets" \
+		--add-data="src/assets/*.jpeg:src/assets" \
 		--add-data="src/assets/*.mp3:src/assets" \
 		src/app.py
 
