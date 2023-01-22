@@ -4,7 +4,7 @@
 
 <img src="src/assets/logo_1.jpeg" width="200" height="200">
 
-*Logo via stable diffusion with prompt 'a logo with a kettlebell in the style of soviet propaganda'*
+*Logo via stable diffusion with prompt 'a logo with a kettlebell in the style of cuphead'*
 
 This is a simple Tkinter app to help with HIIT/Kettlebell workouts. Possible exercises are stored in `src/data/exercises.json` and can be modified as desired. Saved workouts can be defined in `src/data/workouts.json` and loaded, or randomised workouts with custom durations used.
 
@@ -36,6 +36,8 @@ Either `pytest tests` or `make test`.
 To build the app as an exe or equivalent for your OS, run `make build`. The resulting artefact will be in the `dist` folder.
 
 ## Other potential logos
+
+Logos via stable diffusion with prompt 'a logo with a kettlebell in the style of soviet propaganda':
 
 <img src="src/assets/logo_2.jpeg" width="200" height="200">
 <img src="src/assets/logo_3.jpeg" width="200" height="200">
