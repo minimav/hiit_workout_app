@@ -65,6 +65,8 @@ class App(customtkinter.CTk):
         self.countdown.grid(
             row=0, rowspan=1, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
+        self.logo = None
+        self.add_logo()
         self.clock = customtkinter.CTkLabel(
             master=self.countdown, text="", font=("roboto", 96)
         )
@@ -212,6 +214,20 @@ class App(customtkinter.CTk):
         )
         self.next_exercises = NextExercises(self, grid_kwargs)
 
+    def add_logo(self):
+        """Add logo to blank countdown frame."""
+        if self.logo is not None:
+            return
+        self.logo = customtkinter.CTkLabel(
+            master=self.countdown,
+            text="",
+            image=customtkinter.CTkImage(
+                PIL.Image.open(get_path_to_file(ASSETS_FOLDER / "logo_1.jpeg")),
+                size=(300, 300),
+            ),
+        )
+        self.logo.pack()
+
     def pause(self):
         """Pause the current workout."""
         self.start_workout_button.configure(
@@ -278,6 +294,9 @@ class App(customtkinter.CTk):
                 self.create_phases_for_custom_workout()
             else:
                 self.load_phases_for_saved_workout(saved_workout_dropdown_value)
+
+        self.logo.pack_forget()
+        self.logo = None
 
         self.start_workout_button.configure(
             state=tkinter.DISABLED,
@@ -420,6 +439,7 @@ class App(customtkinter.CTk):
         self.clock.configure(text="")
         self.countdown.configure(fg_color="gray17")
         self.next_exercises.clear()
+        self.add_logo()
 
     def update_saved_workouts(self):
         """Update the saved workouts dropdown."""
