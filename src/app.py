@@ -1,6 +1,7 @@
 """HIIT workout app."""
 from pathlib import Path
 from typing import Optional
+import itertools
 
 import customtkinter
 import tkinter
@@ -66,6 +67,8 @@ class App(customtkinter.CTk):
             row=0, rowspan=1, column=1, columnspan=2, padx=10, pady=10, sticky="nsew"
         )
         self.logo = None
+        self.logo_indices = itertools.cycle(range(1, 6))
+        self.current_logo_index = next(self.logo_indices)
         self.add_logo()
         self.clock = customtkinter.CTkLabel(
             master=self.countdown, text="", font=("roboto", 96)
@@ -214,17 +217,28 @@ class App(customtkinter.CTk):
         )
         self.next_exercises = NextExercises(self, grid_kwargs)
 
+    def switch_logo(self):
+        """Switch to another logo."""
+        self.current_logo_index = next(self.logo_indices)
+        self.logo.pack_forget()
+        self.logo = None
+        self.add_logo()
+
     def add_logo(self):
         """Add logo to blank countdown frame."""
         if self.logo is not None:
             return
-        self.logo = customtkinter.CTkLabel(
+        logo_file_name = f"logo_{self.current_logo_index}.jpeg"
+        self.logo = customtkinter.CTkButton(
             master=self.countdown,
             text="",
+            fg_color="transparent",
+            hover_color=COLOURS["background"],
             image=customtkinter.CTkImage(
-                PIL.Image.open(get_path_to_file(ASSETS_FOLDER / "logo_1.jpeg")),
+                PIL.Image.open(get_path_to_file(ASSETS_FOLDER / logo_file_name)),
                 size=(300, 300),
             ),
+            command=self.switch_logo,
         )
         self.logo.pack()
 

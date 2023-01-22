@@ -34,10 +34,3 @@ Either `pytest tests` or `make test`.
 ## Building
 
 To build the app as an exe or equivalent for your OS, run `make build`. The resulting artefact will be in the `dist` folder.
-
-## Other potential logos
-
-Logos via stable diffusion with prompt 'a logo with a kettlebell in the style of soviet propaganda':
-
-<img src="src/assets/logo_2.jpeg" width="200" height="200">
-<img src="src/assets/logo_3.jpeg" width="200" height="200">
