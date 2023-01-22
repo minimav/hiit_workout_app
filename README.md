@@ -2,7 +2,8 @@
 
 ![test workflow](https://github.com/minimav/hiit_workout_app/actions/workflows/test.yaml/badge.svg)
 
-![logo](src/assets/logo_1.jpeg)
+<img src="src/assets/logo_1.jpeg" width="200" height="200">
+
 *Logo via stable diffusion with prompt 'a logo with a kettlebell in the style of soviet propaganda'*
 
 This is a simple Tkinter app to help with HIIT/Kettlebell workouts. Possible exercises are stored in `src/data/exercises.json` and can be modified as desired. Saved workouts can be defined in `src/data/workouts.json` and loaded, or randomised workouts with custom durations used.
@@ -36,5 +37,5 @@ To build the app as an exe or equivalent for your OS, run `make build`. The resu
 
 ## Other potential logos
 
-![logo](src/assets/logo_2.jpeg)
-![logo](src/assets/logo_3.jpeg)
+<img src="src/assets/logo_2.jpeg" width="200" height="200">
+<img src="src/assets/logo_3.jpeg" width="200" height="200">
