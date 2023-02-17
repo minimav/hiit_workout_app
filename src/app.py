@@ -338,6 +338,15 @@ class App(customtkinter.CTk):
 
         total_milliseconds = 0
         exercise_index = 0
+
+        # initialise the next exercises frame
+        callback = self.after(
+            0,
+            self.next_exercises.update,
+            exercise_names,
+        )
+        self.callbacks.append(callback)
+
         for phase_index, phase in enumerate(self.workout):
             fg_color = self.get_phase_countdown_colour(
                 phase, before_first_exercise=exercise_index == 0
@@ -364,19 +373,21 @@ class App(customtkinter.CTk):
                     num_exercises,
                 )
                 self.callbacks.append(callback)
+
+                # exercise index is 1-based, hence the slice here does not
+                # include the exercise itself
+                callback = self.after(
+                    total_milliseconds,
+                    self.next_exercises.update,
+                    exercise_names[exercise_index:],
+                )
+                self.callbacks.append(callback)
             else:
                 callback = self.after(
                     total_milliseconds,
                     self.update_exercise_info_with_rest,
                     exercise_index,
                     num_exercises,
-                )
-                self.callbacks.append(callback)
-
-                callback = self.after(
-                    total_milliseconds,
-                    self.next_exercises.update,
-                    exercise_names[exercise_index:],
                 )
                 self.callbacks.append(callback)
 
