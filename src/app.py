@@ -374,6 +374,8 @@ class App(customtkinter.CTk):
                 )
                 self.callbacks.append(callback)
 
+                # exercise index is 1-based, hence the slice here does not
+                # include the exercise itself
                 callback = self.after(
                     total_milliseconds,
                     self.next_exercises.update,
